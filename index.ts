@@ -1,3 +1,3 @@
-import ifcore from "./src/index.ts";
+import ifcore from "./core/index.ts";
 
-console.log(ifcore);
+ifcore.init();
