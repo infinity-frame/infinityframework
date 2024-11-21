@@ -1,3 +1,8 @@
 {
-  "name": "Awesome app built with infinityframework!"
+  "name": "Awesome app built with infinityframework!",
+  "modules": {
+    "local": {
+      "if.blog": {}
+    }
+  }
 }
