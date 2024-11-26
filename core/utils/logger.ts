@@ -1,5 +1,3 @@
-import process from "node:process";
-
 export function log(message: any, issuer?: string) {
   const prefix = `[${issuer || "GENERIC"} ${new Date().toISOString()}] I: `;
   process.stdout.write(prefix);

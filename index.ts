@@ -1,3 +1,3 @@
-import ifcore from "./core/index.ts";
+import ifcore from "./core/dist/index";
 
-ifcore.init();
+const app = new ifcore("path");
