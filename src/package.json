@@ -1,5 +1,5 @@
 {
-  "name": "infinityframe-core",
+  "name": "infinityframework",
   "version": "0.1.0",
   "main": "dist/index.js",
   "scripts": {
@@ -9,7 +9,21 @@
     "type": "git",
     "url": "git+ssh://git@github.com/infinity-frame/infinityframework.git"
   },
-  "author": "Kryštof Bruthans",
+  "author": "InfinityFrame",
+  "contributors": [
+    {
+      "name": "Kryštof Bruthans",
+      "url": "https://github.com/krystofbruth"
+    },
+    {
+      "name": "Vojtěch Habeš",
+      "url": "https://github.com/vojtechhabes"
+    },
+    {
+      "name": "Ondřej Dudáček",
+      "url": "https://dudacek.eu/"
+    }
+  ],
   "license": "UNLICENSED",
   "bugs": {
     "url": "https://github.com/infinity-frame/infinityframework/issues"

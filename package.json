@@ -1,10 +1,12 @@
 {
-  "name": "infinityframework",
+  "name": "infinityframework-sample-app",
   "version": "1.0.0",
-  "description": "",
+  "description": "Sample app designed to test and develop infinityframework's functionality.",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.ts",
+    "postinstall": "cd src && npm install",
+    "dev:package": "cd src && tsc --watch",
+    "dev:app": "nodemon index.ts",
     "build": "cd src && tsc",
     "test": "npm run build && jest"
   },

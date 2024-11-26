@@ -1,4 +1,4 @@
-import { IFError } from "../src/dist/models/Error";
+import { IFError } from "../src/dist/models/IFError";
 
 const { Manifest } = require("../src/dist/models/Manifest");
 const path = require("path");
@@ -17,12 +17,12 @@ test("Manifest deserialization: ambiguos path", () => {
 });
 
 test("Manifest deserialization: specified path", () => {
-  const manifest = new Manifest(path.resolve("tests/data/Manifest_1.json"));
+  const manifest = new Manifest(path.resolve("tests/data/mockManifest.json"));
   expect(manifest).toMatchObject(mockManifest);
 });
 
 test("Manifest deserialization: Invalid JSON", () => {
-  expect(new Manifest(path.resolve("tests/data/Manifest_2.json"))).toThrow(
+  expect(new Manifest(path.resolve("tests/data/invalidManifest.json"))).toThrow(
     IFError
   );
 });
