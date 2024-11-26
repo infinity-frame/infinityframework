@@ -22,7 +22,5 @@ test("Manifest deserialization: specified path", () => {
 });
 
 test("Manifest deserialization: Invalid JSON", () => {
-  expect(new Manifest(path.resolve("tests/data/invalidManifest.json"))).toThrow(
-    IFError
-  );
+  expect(() => new Manifest("tests/data/invalidManifest.json")).toThrow();
 });

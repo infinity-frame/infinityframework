@@ -1,3 +1,3 @@
 import ifcore from "./src/dist/index";
 
-const app = new ifcore("path");
+const app = new ifcore();
