@@ -6,7 +6,7 @@
   "scripts": {
     "postinstall": "cd src && npm install",
     "dev:package": "cd src && tsc --watch",
-    "dev:app": "nodemon index.ts",
+    "dev:app": "nodemon index.ts | pino-pretty",
     "build": "cd src && tsc",
     "test": "npm run build && jest"
   },
@@ -17,6 +17,7 @@
     "@types/jest": "^29.5.14",
     "jest": "^29.7.0",
     "nodemon": "^3.1.7",
+    "pino-pretty": "^13.0.0",
     "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2"
   }
