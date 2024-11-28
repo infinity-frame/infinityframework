@@ -1,6 +1,10 @@
-import { IFError } from "./IFError";
-import { existsSync, lstatSync, readFileSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import { resolve } from "path";
+import logger from "../lib/logger";
+
+interface ModuleConfig {}
+
+interface ModuleConfigs {}
 
 export class Manifest {
   name: string;
@@ -15,11 +19,13 @@ export class Manifest {
     }
 
     if (!(typeof manifest.name === "string")) {
-      throw new Error("Invalid app name.");
+      throw new Error("Invalid app name");
     }
     this.name = manifest.name;
 
     if (!manifest.modules) {
+      logger.warn("No modules defined in manifest");
+      return;
     }
   }
 }
