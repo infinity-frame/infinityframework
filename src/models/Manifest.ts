@@ -1,13 +1,16 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "path";
 import logger from "../lib/logger";
+import { Module, ModuleType } from "./Module";
 
-interface ModuleConfig {}
-
-interface ModuleConfigs {}
+interface Configs<T> {
+  npm: T[];
+  local: T[];
+}
 
 export class Manifest {
   name: string;
+  modules: Configs<Module>;
 
   constructor(manifestPath?: string) {
     manifestPath = resolve(manifestPath ?? "manifest.json");
@@ -23,9 +26,41 @@ export class Manifest {
     }
     this.name = manifest.name;
 
-    if (!manifest.modules) {
+    this.modules = {
+      npm: [],
+      local: [],
+    };
+
+    console.log(manifest);
+
+    if (
+      !(manifest.modules instanceof Object) ||
+      (!(manifest.npm instanceof Array) &&
+        !(manifest.local instanceof Array)) ||
+      (manifest.npm.length === 0 && manifest.local.length === 0)
+    ) {
       logger.warn("No modules defined in manifest");
       return;
+    }
+
+    const modules = manifest.modules as Configs<unknown>;
+
+    for (const moduleKey in modules.npm) {
+      const module = new Module(
+        moduleKey,
+        ModuleType.NPM,
+        modules.npm[moduleKey]
+      );
+      this.modules.npm.push(module);
+    }
+
+    for (const moduleKey in modules.local) {
+      const module = new Module(
+        moduleKey,
+        ModuleType.LOCAL,
+        modules.local[moduleKey]
+      );
+      this.modules.local.push(module);
     }
   }
 }

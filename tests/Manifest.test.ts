@@ -1,5 +1,3 @@
-import { IFError } from "../src/dist/models/IFError";
-
 const { Manifest } = require("../src/dist/models/Manifest");
 const path = require("path");
 const mockManifest = {
