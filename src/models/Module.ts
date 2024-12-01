@@ -1,4 +1,4 @@
-import { existsSync } from "node:fs";
+import { lstatSync } from "node:fs";
 import { resolve } from "node:path";
 
 export enum ModuleType {
@@ -18,8 +18,8 @@ export class Module {
       throw new Error("Invalid module type");
     }
 
-    if (!existsSync(this.path)) {
-      throw new Error(`Module ${name} not found`);
+    if (lstatSync(this.path).isDirectory() === true) {
+      throw new Error(`${ModuleType.LOCAL ? "Local" : "NPM"} module ${name} not found`)
     }
   }
 }

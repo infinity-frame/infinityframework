@@ -35,14 +35,14 @@ export class Manifest {
       !(manifest.modules instanceof Object) ||
       (!(manifest.npm instanceof Object) &&
         !(manifest.local instanceof Object)) ||
-      (Object.keys(manifest.npm).length === 0 && Object.keys(manifest.local).length === 0)
+      ((Object.keys(manifest.npm).length === 0) && (Object.keys(manifest.local).length === 0))
     ) {
+
+
       logger.warn("No modules defined in manifest");
       return;
     }
-
-    AuthenticatorAssertionResponse;
-
+  
     const modules = manifest.modules as Configs<unknown>;
 
     for (const moduleKey in modules.npm) {
