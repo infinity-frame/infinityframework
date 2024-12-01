@@ -3,23 +3,33 @@ import { resolve } from "path";
 import logger from "../lib/logger";
 import { Module, ModuleType } from "./Module";
 
-interface Configs<T> {
-  npm: T[];
-  local: T[];
+interface Configs {
+  npm: { [key: string]: any };
+  local: { [key: string]: any };
+}
+
+/** Conservative interface for maximum security, requires only that the variable is of type Object */
+interface UserManifest {
+  name?: string;
+  modules?: {
+    npm: unknown;
+    local: unknown;
+  };
 }
 
 export class Manifest {
   name: string;
-  modules: Configs<Module>;
+  modules: Configs;
 
   constructor(manifestPath?: string) {
     manifestPath = resolve(manifestPath ?? "manifest.json");
 
     let manifestRaw = readFileSync(manifestPath, "utf-8");
-    let manifest = JSON.parse(manifestRaw);
-    if (!(manifest instanceof Object)) {
+    let manifestParsed: unknown = JSON.parse(manifestRaw);
+    if (!(manifestParsed instanceof Object)) {
       throw new Error("Incorrect manifest data type");
     }
+    let manifest = manifestParsed as UserManifest;
 
     if (!(typeof manifest.name === "string")) {
       throw new Error("Invalid app name");
@@ -31,19 +41,24 @@ export class Manifest {
       local: [],
     };
 
-    if (
-      !(manifest.modules instanceof Object) ||
-      (!(manifest.npm instanceof Object) &&
-        !(manifest.local instanceof Object)) ||
-      ((Object.keys(manifest.npm).length === 0) && (Object.keys(manifest.local).length === 0))
-    ) {
-
-
+    if (!(manifest.modules instanceof Object)) {
       logger.warn("No modules defined in manifest");
       return;
     }
-  
-    const modules = manifest.modules as Configs<unknown>;
+
+    const npmModulesExist =
+      manifest.modules.npm instanceof Object &&
+      Object.keys(manifest.modules.npm).length !== 0;
+    const localModulesExist =
+      manifest.modules.local instanceof Object &&
+      Object.keys(manifest.modules.local).length !== 0;
+
+    if (!npmModulesExist && !localModulesExist) {
+      logger.warn("No modules defined in manifest");
+      return;
+    }
+
+    const modules: Configs = manifest.modules as Configs;
 
     for (const moduleKey in modules.npm) {
       const module = new Module(
