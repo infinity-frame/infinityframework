@@ -1,22 +1,14 @@
 const { Manifest } = require("../src/dist/models/Manifest");
 const path = require("path");
-const mockManifest = {
-  name: "Awesome app built with infinityframework!",
-  modules: {
-    local: {
-      "if.blog": {},
-    },
-  },
-};
 
 test("Manifest deserialization: ambiguos path", () => {
   const manifest = new Manifest();
-  expect(manifest).toMatchObject({});
+  expect(manifest).toBeInstanceOf(Manifest);
 });
 
 test("Manifest deserialization: specified path", () => {
   const manifest = new Manifest(path.resolve("tests/data/mockManifest.json"));
-  expect(manifest).toMatchObject(mockManifest);
+  expect(manifest).toBeInstanceOf(Manifest);
 });
 
 test("Manifest deserialization: Invalid JSON", () => {

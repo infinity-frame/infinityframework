@@ -11,17 +11,15 @@ export class Module {
 
   constructor(name: string, type: ModuleType, config?: unknown) {
     if (type === ModuleType.NPM) {
-      this.path = resolve("npm", name);
+      this.path = resolve("node_modules", name);
     } else if (type === ModuleType.LOCAL) {
       this.path = resolve("local", name);
     } else {
       throw new Error("Invalid module type");
     }
 
-    console.log(this.path);
-
     if (!existsSync(this.path)) {
-      throw new Error("Module not found");
+      throw new Error(`Module ${name} not found`);
     }
   }
 }

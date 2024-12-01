@@ -33,10 +33,5 @@
   "dependencies": {
     "express": "^4.21.1",
     "pino": "^9.5.0"
-  },
-  "devDependencies": {
-    "@types/node": "^22.10.0",
-    "@types/pino": "^7.0.4",
-    "typescript": "^5.7.2"
   }
 }
