@@ -77,5 +77,7 @@ export class Manifest {
       );
       this.modules.local.push(module);
     }
+
+    console.log(this.modules);
   }
 }
