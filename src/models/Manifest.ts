@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "path";
-import logger from "../lib/logger";
-import { Module, ModuleType } from "./Module";
+import logger from "../lib/logger.js";
+import { Module, ModuleType } from "./Module.js";
 
 interface Configs {
   npm: { [key: string]: any };
@@ -77,7 +77,5 @@ export class Manifest {
       );
       this.modules.local.push(module);
     }
-
-    console.log(this.modules);
   }
 }

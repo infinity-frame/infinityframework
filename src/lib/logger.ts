@@ -1,3 +1,3 @@
-import pino, { Logger } from "pino";
+import { pino } from "pino";
 
 export default pino();

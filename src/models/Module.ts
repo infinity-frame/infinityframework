@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { Version } from "../lib/version";
-import logger from "../lib/logger";
+import { Version } from "../lib/version.js";
+import logger from "../lib/logger.js";
 
 export enum ModuleType {
   NPM,
