@@ -27,6 +27,7 @@ export class Module {
   public version: Version;
   /** Contains optional configuration logic of the module. */
   public config: Object | undefined;
+  public path: string;
   private configPath: string;
 
   constructor(name: string, type: ModuleType, config?: unknown) {
@@ -38,8 +39,10 @@ export class Module {
     this.vendor = name.split(".")[0];
 
     if (type === ModuleType.NPM) {
+      this.path = resolve("node_modules", name);
       this.configPath = resolve("node_modules", name, "modconfig.json");
     } else if (type === ModuleType.LOCAL) {
+      this.path = resolve("local", name);
       this.configPath = resolve("local", name, "modconfig.json");
     } else {
       throw new Error("Invalid module type");

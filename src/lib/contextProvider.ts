@@ -1,6 +1,7 @@
-import { EventEmitter } from "stream";
+import { EventEmitter } from "events";
 import { Module } from "../models/Module.js";
 import { Db } from "mongodb";
+import { db } from "./db.js";
 
 interface Modules {
   [key: string]: Module;
@@ -18,13 +19,13 @@ class contextProvider {
   public event: EventEmitter;
   public modules: Modules;
   public moduleExports: ModuleExports;
-  // public db: Db;
+  public db: Db;
 
   constructor() {
     this.event = new EventEmitter();
     this.modules = {};
     this.moduleExports = {};
-    // this.db =
+    this.db = db;
   }
 }
 
