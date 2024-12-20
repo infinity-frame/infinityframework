@@ -1,3 +1,3 @@
-import { App } from "./App.js";
+import { Core } from "./Core.js";
 
-export default App;
+export default Core;
