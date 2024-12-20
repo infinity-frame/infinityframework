@@ -17,13 +17,13 @@ interface ModuleConfig {
 
 export class Module {
   /** Qualified name of the module, used for referencing. */
-  public fullName: String;
+  public fullName: string;
   /** Machine name of the module, second part of the `fullName` used for referencing. */
-  public name: String;
+  public name: string;
   /** Machine name of the vendor of the module, first part of the `fullName` used for referencing. */
-  public vendor: String;
+  public vendor: string;
   /** Human readable name of the module, used for displaying. */
-  public label: String | undefined;
+  public label: string | undefined;
   /** Version object containing numerical properties `major`, `minor` and `patch` as per conventional versioning. */
   public version: string;
   /** Contains optional configuration logic of the module. */

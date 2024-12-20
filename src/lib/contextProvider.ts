@@ -13,9 +13,35 @@ interface ModulesList {
 }
 
 interface ModuleExports {
-  [key: string]: {
-    [key: string]: Function;
-  };
+  [vendor: string]: { [module: string]: ModulePublic };
+}
+
+export interface ModulePublic {
+  [key: string]: Function;
+}
+
+/** Validates the public exports of a module, throws if invalid */
+export function validateModulePublic(
+  exports: unknown,
+  module: Module
+): exports is ModulePublic {
+  if (!(exports instanceof Object)) {
+    throw new Error(
+      `Module public function validation error - ${module.fullName} exports are not an object`
+    );
+  }
+
+  let exportsObj = exports as { [key: string]: unknown };
+
+  for (const func in exportsObj) {
+    if (!(exportsObj[func] instanceof Function)) {
+      throw new Error(
+        `Module public function validation error - ${module.fullName} public function ${func} not a function`
+      );
+    }
+  }
+
+  return true;
 }
 
 /** Provides global context, meaning events, list of installed modules and their exposed functions */
@@ -23,12 +49,19 @@ class globalContextProvider {
   /** Events interface of the framework. */
   public event: EventEmitter;
   public modules: ModulesList;
-  public moduleExports: ModuleExports;
+  public exports: ModuleExports;
 
   constructor() {
     this.event = event;
     this.modules = {};
-    this.moduleExports = {};
+    this.exports = {};
+  }
+
+  public registerExports(exports: ModulePublic, module: Module) {
+    if (typeof this.exports[module.vendor] === "undefined") {
+      this.exports[module.vendor] = {};
+    }
+    this.exports[module.vendor][module.name] = exports;
   }
 }
 
