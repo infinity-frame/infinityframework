@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "path";
 import logger from "./logger.js";
-import { Module, ModuleType } from "./module.js";
+import { Module, ModuleType } from "../models/Module.js";
 
 interface Configs {
   npm: { [key: string]: any };

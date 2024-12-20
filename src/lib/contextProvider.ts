@@ -1,5 +1,5 @@
 import { EventEmitter } from "events";
-import { Module } from "./module.js";
+import { Module } from "../models/Module.js";
 import { Collection } from "mongodb";
 import { db } from "./db.js";
 import { event } from "./eventEmitter.js";
@@ -36,11 +36,19 @@ export const globalContext = new globalContextProvider();
 
 /** Provides module-specific context, meaning db and its configuration defined in the manifest file */
 export class moduleContextProvider {
-  public collections: Collection[];
+  public collections: {
+    [key: string]: Collection;
+  };
   public configuration: Object;
 
   constructor(moduleConfig: Module) {
-    this.collections = [];
-    this.configuration = {};
+    this.configuration = moduleConfig.config || {};
+
+    this.collections = {};
+    for (const collection of moduleConfig.collections) {
+      this.collections[collection] = db.collection(
+        `${moduleConfig.fullName}.${collection}`
+      );
+    }
   }
 }

@@ -1,5 +1,5 @@
 import { resolve } from "path";
-import { Module } from "./module.js";
+import { Module } from "../models/Module.js";
 import { globalContext, moduleContextProvider } from "./contextProvider.js";
 
 export async function load(module: Module) {
