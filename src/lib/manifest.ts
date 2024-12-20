@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "path";
-import logger from "../lib/logger.js";
-import { Module, ModuleType } from "./Module.js";
+import logger from "./logger.js";
+import { Module, ModuleType } from "./module.js";
 
 interface Configs {
   npm: { [key: string]: any };
@@ -17,6 +17,7 @@ interface UserManifest {
   };
 }
 
+/** Used for type definitions, do not use on its own. */
 export class Manifest {
   name: string;
   modules: Configs;
@@ -79,3 +80,5 @@ export class Manifest {
     }
   }
 }
+
+export const manifest = new Manifest();

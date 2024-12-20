@@ -1,6 +1,8 @@
-import { Manifest } from "./models/Manifest.js";
+import { Manifest, manifest } from "./lib/manifest.js";
 import logger from "./lib/logger.js";
-import EventEmitter from "events";
+import { event } from "./lib/eventEmitter.js";
+import { EventEmitter } from "events";
+await import("./lib/db.js");
 
 interface Options {
   manifestPath?: string;
@@ -8,47 +10,24 @@ interface Options {
 }
 
 export class App {
-  private options: Options;
-  private manifest: Manifest;
-  private dbUri: string;
-  public events: EventEmitter;
+  public event: EventEmitter;
 
   /** Initializes the app, reading the manifest file from root of the project if manifestPath isn't specified. */
   constructor(options?: { manifestPath?: string; dbUri?: string }) {
-    this.events = new EventEmitter();
-    this.options = options ?? {};
+    this.event = event;
 
-    if (this.options && this.options.dbUri) {
-      this.dbUri = this.options.dbUri;
-    } else {
-      this.dbUri = "mongodb://localhost:27017";
-    }
-
-    if (!process.env.IF_DBURI) {
-      process.env.IF_DBURI = this.dbUri;
-    }
-    import("./lib/db.js");
-
-    try {
-      this.manifest = new Manifest(this.options.manifestPath);
-    } catch (error) {
-      logger.error(error, "Error occured while instantiating manifest.");
-      this.events.emit("error", error);
-      throw error;
-    }
-
-    this.loadModules();
+    this.loadModules().then(() => event.emit("init"));
   }
 
   private async loadModules() {
     const moduleLoader = await import("./lib/moduleLoader.js");
 
-    for (const module in this.manifest.modules.local) {
-      await moduleLoader.load(this.manifest.modules.local[module]);
+    for (const module in manifest.modules.local) {
+      await moduleLoader.load(manifest.modules.local[module]);
     }
 
-    for (const module in this.manifest.modules.npm) {
-      await moduleLoader.load(this.manifest.modules.local[module]);
+    for (const module in manifest.modules.npm) {
+      await moduleLoader.load(manifest.modules.local[module]);
     }
   }
 }

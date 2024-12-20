@@ -1,6 +1,6 @@
 import { resolve } from "path";
-import { Module } from "../models/Module.js";
-import context from "./contextProvider.js";
+import { Module } from "./module.js";
+import { globalContext, moduleContextProvider } from "./contextProvider.js";
 
 export async function load(module: Module) {
   const index = await import(`file://${resolve(module.path, "index.js")}`);
@@ -10,5 +10,6 @@ export async function load(module: Module) {
     );
   }
 
-  index.default(context);
+  const moduleContext = new moduleContextProvider(module);
+  index.default(globalContext, moduleContext);
 }

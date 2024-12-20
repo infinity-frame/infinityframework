@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { Version } from "../lib/version.js";
-import logger from "../lib/logger.js";
+import logger from "./logger.js";
+import semver from "semver";
 
 export enum ModuleType {
   NPM,
@@ -12,6 +12,7 @@ interface ModuleConfig {
   label: string | null;
   config?: object | null;
   version: string;
+  collections?: string[];
 }
 
 export class Module {
@@ -24,11 +25,15 @@ export class Module {
   /** Human readable name of the module, used for displaying. */
   public label: String | undefined;
   /** Version object containing numerical properties `major`, `minor` and `patch` as per conventional versioning. */
-  public version: Version;
+  public version: string;
   /** Contains optional configuration logic of the module. */
   public config: Object | undefined;
+  /** Path of the module's root folder */
   public path: string;
+  /** Path to the modconfig.json file */
   private configPath: string;
+  /** Collections as defined in the module configuration file */
+  public collections: string[];
 
   constructor(name: string, type: ModuleType, config?: unknown) {
     if (name.split(".").length !== 2) {
@@ -57,10 +62,19 @@ export class Module {
       );
     }
 
-    this.version = new Version(moduleConfig.version);
+    this.version = moduleConfig.version;
 
     if (typeof moduleConfig.label === "string") {
       this.label = moduleConfig.label;
+    }
+
+    if (
+      typeof moduleConfig.collections !== "undefined" &&
+      moduleConfig.collections.length > 0
+    ) {
+      this.collections = moduleConfig.collections;
+    } else {
+      this.collections = [];
     }
   }
 
@@ -72,7 +86,7 @@ export class Module {
       );
     }
 
-    if (typeof obj.version !== "string") {
+    if (typeof obj.version !== "string" && semver.valid(obj.version)) {
       throw new Error(
         `Module ${this.fullName} configuration validation error - missing version.`
       );
@@ -84,10 +98,28 @@ export class Module {
       );
     }
 
-    if (!(obj.config instanceof Object) && typeof obj.label !== "undefined") {
+    if (!(obj.config instanceof Object) && typeof obj.config !== "undefined") {
       throw new Error(
         `Module ${this.fullName} configuration validation error - config invalid data type.`
       );
+    }
+
+    const collections = obj.collections as Array<any>;
+    if (
+      !(collections instanceof Array) &&
+      typeof obj.collections !== "undefined"
+    ) {
+      throw new Error(
+        `Module ${this.fullName} configuration validation error - collections invalid data type.`
+      );
+    }
+
+    if (collections instanceof Array) {
+      if (!collections.some((item) => typeof item === "string")) {
+        throw new Error(
+          `Module ${this.fullName} configuration validation error - collections invalid data type.`
+        );
+      }
     }
 
     return true;

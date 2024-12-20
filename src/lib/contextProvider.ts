@@ -1,10 +1,15 @@
 import { EventEmitter } from "events";
-import { Module } from "../models/Module.js";
-import { Db } from "mongodb";
+import { Module } from "./module.js";
+import { Collection } from "mongodb";
 import { db } from "./db.js";
+import { event } from "./eventEmitter.js";
+import semver from "semver";
 
-interface Modules {
-  [key: string]: Module;
+interface ModulesList {
+  [key: string]: {
+    name: string;
+    version: string;
+  };
 }
 
 interface ModuleExports {
@@ -13,21 +18,29 @@ interface ModuleExports {
   };
 }
 
-/** Provides context (db, list of installed modules, public functions of these modules etc.). */
-class contextProvider {
+/** Provides global context, meaning events, list of installed modules and their exposed functions */
+class globalContextProvider {
   /** Events interface of the framework. */
   public event: EventEmitter;
-  public modules: Modules;
+  public modules: ModulesList;
   public moduleExports: ModuleExports;
-  public db: Db;
 
   constructor() {
-    this.event = new EventEmitter();
+    this.event = event;
     this.modules = {};
     this.moduleExports = {};
-    this.db = db;
   }
 }
 
-const provider = new contextProvider();
-export default provider;
+export const globalContext = new globalContextProvider();
+
+/** Provides module-specific context, meaning db and its configuration defined in the manifest file */
+export class moduleContextProvider {
+  public collections: Collection[];
+  public configuration: Object;
+
+  constructor(moduleConfig: Module) {
+    this.collections = [];
+    this.configuration = {};
+  }
+}
