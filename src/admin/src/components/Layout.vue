@@ -1,6 +1,7 @@
 <script setup>
 import { useRoute, RouterLink } from "vue-router";
 import { Sidebar, NormalLayout } from "@infinity-frame/infinitycomponent";
+import authStore from "../stores/auth";
 
 const route = useRoute();
 </script>
@@ -8,7 +9,7 @@ const route = useRoute();
 <template>
   <Sidebar
     title="IF Admin"
-    currentUserEmail="ahojky@ahojky.com"
+    :currentUserEmail="authStore.currentUser?.email"
     :currentPath="route.path"
     :links="[
       { label: 'Blog', icon: 'blog', to: '/blog' },
