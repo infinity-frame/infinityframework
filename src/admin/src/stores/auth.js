@@ -1,5 +1,4 @@
 import { reactive } from "vue";
-import router from "../router";
 
 const authStore = reactive({
   currentUser: null,

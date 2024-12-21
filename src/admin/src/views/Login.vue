@@ -6,7 +6,6 @@ import {
   TextInput,
 } from "@infinity-frame/infinitycomponent";
 import authStore from "../stores/auth";
-import router from "../router";
 
 const handleLogin = async (event) => {
   event.preventDefault();
