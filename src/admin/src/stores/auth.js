@@ -1,4 +1,5 @@
 import { reactive } from "vue";
+import router from "../router";
 
 const authStore = reactive({
   currentUser: null,
@@ -10,7 +11,6 @@ const authStore = reactive({
     this.currentUser = {
       email,
     };
-
     localStorage.setItem("refreshToken", "dummyRefreshToken");
   },
 
@@ -19,7 +19,7 @@ const authStore = reactive({
 
     // Simulate logout
     this.currentUser = null;
-    localStorage.setItem("refreshToken", "dummyRefreshToken");
+    localStorage.removeItem("refreshToken");
   },
 
   async changePassword(oldPassword, newPassword) {
@@ -49,7 +49,5 @@ const authStore = reactive({
     };
   },
 });
-
-authStore.refreshSession();
 
 export default authStore;

@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
+import { watch } from "vue";
 import authStore from "./stores/auth";
 
 const routes = [
@@ -19,7 +20,7 @@ const routes = [
         name: "MyProfile",
         component: () => import("./views/MyProfile.vue"),
         meta: {
-          requiresAuth: false, // temporarily set to false
+          requiresAuth: true, // temporarily set to false
         },
       },
       {
@@ -27,7 +28,7 @@ const routes = [
         name: "Module",
         component: () => import("./views/Module.vue"),
         meta: {
-          requiresAuth: false, // temporarily set to false
+          requiresAuth: true, // temporarily set to false
         },
       },
     ],
@@ -41,13 +42,34 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   window.scrollTo(0, 0);
+
   if (to.meta.requiresAuth && !authStore.currentUser) {
-    next("/login");
+    if (to.path !== "/login") {
+      next("/login");
+    } else {
+      next();
+    }
   } else if (!to.meta.requiresAuth && authStore.currentUser) {
-    next("/");
+    if (to.path !== "/") {
+      next("/");
+    } else {
+      next();
+    }
   } else {
     next();
   }
 });
+
+watch(
+  () => authStore.currentUser,
+  (newUser, oldUser) => {
+    if (!newUser && oldUser) {
+      router.push("/login");
+    }
+    if (newUser && !oldUser) {
+      router.push("/");
+    }
+  }
+);
 
 export default router;
