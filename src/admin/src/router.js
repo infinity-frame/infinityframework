@@ -12,11 +12,25 @@ const routes = [
   },
   {
     path: "/",
-    name: "Dashboard",
-    component: () => import("./views/Dashboard.vue"),
-    meta: {
-      requiresAuth: true,
-    },
+    component: () => import("./components/Layout.vue"),
+    children: [
+      {
+        path: "/my-profile",
+        name: "MyProfile",
+        component: () => import("./views/MyProfile.vue"),
+        meta: {
+          requiresAuth: false, // temporarily set to false
+        },
+      },
+      {
+        path: "/:moduleName",
+        name: "Module",
+        component: () => import("./views/Module.vue"),
+        meta: {
+          requiresAuth: false, // temporarily set to false
+        },
+      },
+    ],
   },
 ];
 

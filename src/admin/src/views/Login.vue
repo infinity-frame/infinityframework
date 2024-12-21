@@ -11,10 +11,16 @@ import {
   <CenterBoxLayout title="Přihlášení">
     <p>Vítejte v administračním systému InfinityFrameworku!</p>
     <form>
-      <TextInput name="username" label="Email" icon="mail" required />
+      <TextInput
+        name="email"
+        placeholder="Email"
+        icon="mail"
+        type="email"
+        required
+      />
       <TextInput
         name="password"
-        label="Heslo"
+        placeholder="Heslo"
         type="password"
         icon="lock"
         required
