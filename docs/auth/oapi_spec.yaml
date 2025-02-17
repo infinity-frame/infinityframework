@@ -1,0 +1,100 @@
+openapi: 3.0.3
+info:
+  title: InfinityFramework auth
+  description: |
+    Authentication & authorization management API used in InfinityFramework.
+
+    To access, use the prefix /api/auth/{PATH}.
+
+    The Session tokens provided by this API are to be used in the `Bearer` format inside `Authorization` header of the HTTP request.
+
+    To create and update the Users, utilize a CLI directly on the server.
+
+  license:
+    name: MIT License
+    url: https://opensource.org/license/mit
+  version: 1.0.0
+tags:
+  - name: Auth
+    description: Routes for authenticating the User and managing Sessions.
+components:
+  responses:
+    ServerError:
+      description: Internal server error occured. If the issue persists, contact the maintainers.
+  schemas:
+    UserDTO:
+      type: object
+      required:
+        - username
+        - createdAt
+        - id
+      properties:
+        username:
+          type: string
+          example: admin
+        createdAt:
+          type: string
+          format: date-time
+        id:
+          type: string
+          format: ObjectId
+          example: 507f1f77bcf86cd799439011
+paths:
+  /auth:
+    post:
+      tags:
+        - Auth
+      summary: Log-in and create a new Session.
+      description: Authenticates the User and creates a new Session.
+      responses:
+        "201":
+          description: Authentication success, the response body contains the created sessionToken.
+          content:
+            text/plain:
+              schema:
+                type: string
+                format: sha512-hex
+                example: ae3d347982977b422948b64011ac14ac76c9ab15898fb562a66a136733aa645fb3a9ccd9bee00cc578c2f44f486af47eb254af7c174244086d174cc52341e63a
+        "400":
+          description: Authentication failure, either the username or the password were incorrect.
+        "500":
+          $ref: "#/components/responses/ServerError"
+    delete:
+      tags:
+        - Auth
+      summary: Log-out and delete the Session.
+      description: Logs-out the user and deletes the associated Session.
+      parameters:
+        - in: header
+          name: Authorization
+          description: The sessionToken in Bearer format.
+          schema:
+            type: string
+          required: true
+      responses:
+        "204":
+          description: Log-out success, the Session was deleted and the authorization is no longer valid.
+        "404":
+          description: Session with the provided sessionToken wasn't found.
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /me:
+    get:
+      tags:
+        - Auth
+      summary: Get the current signed-in user.
+      description: Based on the authorization credentials, return the user.
+      parameters:
+        - in: header
+          name: Authorization
+          description: The sessionToken in Bearer format.
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Authorization credentials valid, the body contains details about the user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserDTO"
