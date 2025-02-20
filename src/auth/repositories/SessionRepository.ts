@@ -7,28 +7,25 @@ import {
   UpdateResult,
 } from "mongodb";
 import { Session } from "../models/Session.js";
-import {
-  Repository,
-  RepositoryError,
-  RepositoryErrorCodes,
-} from "./Repository.js";
+import { Repository } from "./Repository.js";
+import { RepositoryException } from "../exceptions.js";
 
-interface CreateSession {
+export interface CreateSession {
   token: string;
   userId: string;
 }
 
-interface UpdateSession {
+export interface UpdateSession {
   lastUsed?: Date;
 }
 
-interface SessionFilter {
+export interface SessionFilter {
   id?: string;
   token?: string;
   userId?: string;
 }
 
-type SessionRepository = Repository<
+export type SessionRepository = Repository<
   Session,
   CreateSession,
   UpdateSession,
@@ -65,7 +62,10 @@ export class MongoSessionRepository implements SessionRepository {
       try {
         _id = new ObjectId(filter.id);
       } catch (err) {
-        throw new RepositoryError(RepositoryErrorCodes.MAP);
+        throw new RepositoryException(
+          err,
+          "Failed to cast id to Mongo ObjectId"
+        );
       }
     }
 
@@ -95,7 +95,7 @@ export class MongoSessionRepository implements SessionRepository {
     try {
       await this.SessionCollection.insertOne(sessionDoc);
     } catch (err) {
-      throw new RepositoryError(RepositoryErrorCodes.INTERNAL, err);
+      throw new RepositoryException(err);
     }
 
     return this.mapSession(sessionDoc);
@@ -108,7 +108,7 @@ export class MongoSessionRepository implements SessionRepository {
     try {
       sessionDocs = await this.SessionCollection.find(mongoFilter).toArray();
     } catch (err) {
-      throw new RepositoryError(RepositoryErrorCodes.INTERNAL, err);
+      throw new RepositoryException(err);
     }
 
     return sessionDocs.map((sessionDoc) => this.mapSession(sessionDoc));
@@ -126,7 +126,7 @@ export class MongoSessionRepository implements SessionRepository {
     try {
       res = await this.SessionCollection.updateMany(mongoFilter, updateFilter);
     } catch (err) {
-      throw new RepositoryError(RepositoryErrorCodes.INTERNAL, err);
+      throw new RepositoryException(err);
     }
 
     return res.matchedCount;
@@ -139,7 +139,7 @@ export class MongoSessionRepository implements SessionRepository {
     try {
       res = await this.SessionCollection.deleteMany(mongoFilter);
     } catch (err) {
-      throw new RepositoryError(RepositoryErrorCodes.INTERNAL, err);
+      throw new RepositoryException(err);
     }
 
     return res.deletedCount;

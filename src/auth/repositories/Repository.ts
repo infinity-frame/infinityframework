@@ -12,22 +12,3 @@ export interface Repository<TModel, TCreate, TUpdate, TFilter> {
   /** Deletes all object matching the filter and returns the deleted count. */
   delete(filter: TFilter): Promise<number>;
 }
-
-export enum RepositoryErrorCodes {
-  NOT_FOUND,
-  ALREADY_EXISTS,
-  /** In case of update or delete operation didn't receive enough parameters. */
-  NO_PARAMS,
-  /** In case mapping of a particular technology (like MongoDB ObjectIds) didn't work properly. */
-  MAP,
-  INTERNAL,
-}
-
-export class RepositoryError extends Error {
-  constructor(
-    public readonly code: RepositoryErrorCodes,
-    public readonly originalError?: any
-  ) {
-    super();
-  }
-}

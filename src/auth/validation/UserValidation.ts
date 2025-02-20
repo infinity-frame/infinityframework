@@ -1,14 +1,14 @@
 import { z } from "zod";
 import { MiddlewareValidatorFactory } from "./Validation.js";
 
-const UserCredentialsSchema = z.object({
+const UserCredentialsInputSchema = z.object({
   username: z.string(),
   password: z.string(),
 });
 export const UserCredentialsValidationMiddleware = MiddlewareValidatorFactory(
-  UserCredentialsSchema
+  UserCredentialsInputSchema
 );
-export type UserCredentialsDTO = z.infer<typeof UserCredentialsSchema>;
+export type UserCredentialsInput = z.infer<typeof UserCredentialsInputSchema>;
 
 const CreateUserInputSchema = z.object({
   username: z.string(),

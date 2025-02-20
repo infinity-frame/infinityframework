@@ -1,8 +1,4 @@
-import {
-  Repository,
-  RepositoryError,
-  RepositoryErrorCodes,
-} from "./Repository.js";
+import { Repository } from "./Repository.js";
 import { User } from "../models/User.js";
 import {
   Collection,
@@ -12,6 +8,7 @@ import {
   UpdateFilter,
   UpdateResult,
 } from "mongodb";
+import { RepositoryException } from "../exceptions.js";
 
 interface CreateUser {
   username: string;
@@ -28,7 +25,12 @@ interface UserFilter {
   username?: string;
 }
 
-type UserRepository = Repository<User, CreateUser, UpdateUser, UserFilter>;
+export type UserRepository = Repository<
+  User,
+  CreateUser,
+  UpdateUser,
+  UserFilter
+>;
 
 /** MongoDB Repository */
 interface MongoUserFilter {
@@ -68,7 +70,10 @@ export class MongoUserRepository implements UserRepository {
       try {
         _id = new ObjectId(filter.id);
       } catch (err) {
-        throw new RepositoryError(RepositoryErrorCodes.MAP, err);
+        throw new RepositoryException(
+          err,
+          "Failed to cast id to Mongo ObjectId"
+        );
       }
     }
 
@@ -89,7 +94,7 @@ export class MongoUserRepository implements UserRepository {
     try {
       await this.UserCollection.insertOne(mongoUser);
     } catch (err) {
-      throw new RepositoryError(RepositoryErrorCodes.INTERNAL, err);
+      throw new RepositoryException(err);
     }
 
     return this.mapUser(mongoUser);
@@ -106,7 +111,7 @@ export class MongoUserRepository implements UserRepository {
     try {
       res = await this.UserCollection.updateMany(mongoFilter, updateFilter);
     } catch (err) {
-      throw new RepositoryError(RepositoryErrorCodes.INTERNAL, err);
+      throw new RepositoryException(err);
     }
 
     return res.matchedCount;
@@ -119,7 +124,7 @@ export class MongoUserRepository implements UserRepository {
     try {
       userDocs = await this.UserCollection.find(mongoFilter).toArray();
     } catch (err) {
-      throw new RepositoryError(RepositoryErrorCodes.INTERNAL, err);
+      throw new RepositoryException(err);
     }
 
     const users = userDocs.map((user) => this.mapUser(user));
@@ -133,7 +138,7 @@ export class MongoUserRepository implements UserRepository {
     try {
       res = await this.UserCollection.deleteMany(mongoFilter);
     } catch (err) {
-      throw new RepositoryError(RepositoryErrorCodes.INTERNAL, err);
+      throw new RepositoryException(err);
     }
 
     return res.deletedCount;
