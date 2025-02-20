@@ -32,15 +32,15 @@ const authFetch = async (url, options) => {
     await waitForAccessToken();
   }
 
-  try {
-    return await fetch(url, {
-      ...options,
-      headers: {
-        ...options.headers,
-        Authorization: `Bearer ${accessToken.value}`,
-      },
-    });
-  } catch (error) {
+  const response = await fetch(url, {
+    ...options,
+    headers: {
+      ...options.headers,
+      Authorization: `Bearer ${accessToken.value}`,
+    },
+  });
+
+  if (response.status === 401) {
     requestAccessToken();
     await waitForAccessToken();
     return await fetch(url, {
@@ -51,6 +51,8 @@ const authFetch = async (url, options) => {
       },
     });
   }
+
+  return response;
 };
 
 onMounted(() => {
@@ -90,7 +92,6 @@ const handleCreatePost = async () => {
       category: newCategory.value,
       content: newContent.value,
     }),
-    mode: "no-cors",
   });
 
   if (response.ok) {
