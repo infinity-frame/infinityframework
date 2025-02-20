@@ -11,7 +11,8 @@ import {
   UserFilterOptions,
   UserSensitiveDTO,
 } from "./authValidation.js";
-import { HashSuite, Repository, TokenSuite } from "./lib/lib.js";
+import { Repository, TokenSuite } from "./repositories/Repository.js";
+import { HashSuite } from "./lib/HashSuites/types.js";
 
 export class AuthController {
   constructor(
