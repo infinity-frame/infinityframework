@@ -20,7 +20,7 @@ const routes = [
         name: "MyProfile",
         component: () => import("./views/MyProfile.vue"),
         meta: {
-          requiresAuth: true, // temporarily set to false
+          requiresAuth: true,
         },
       },
       {
@@ -28,7 +28,7 @@ const routes = [
         name: "Module",
         component: () => import("./views/Module.vue"),
         meta: {
-          requiresAuth: true, // temporarily set to false
+          requiresAuth: true,
         },
       },
     ],
