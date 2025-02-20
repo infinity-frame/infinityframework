@@ -1,8 +1,8 @@
 import { AuthenticationException, NotFoundException } from "../exceptions.js";
-import { HashSuite } from "../lib/HashSuites/types.js";
+import { HashSuite } from "../lib/HashSuites/HashSuite.js";
 import { User } from "../models/User.js";
 import { UserRepository } from "../repositories/UserRepository.js";
-import { UserCredentialsInput } from "../validation/UserValidation.js";
+import { UserCredentialsInput } from "../validation/AuthenticationValidation.js";
 
 export class UserService {
   constructor(
@@ -21,10 +21,10 @@ export class UserService {
     }
 
     if (
-      !this.passwordHashSuite.compare(
+      !(await this.passwordHashSuite.compare(
         userCredentials.password,
         user.passwordHash
-      )
+      ))
     ) {
       throw new AuthenticationException();
     }

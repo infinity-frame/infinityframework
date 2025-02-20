@@ -1,6 +1,6 @@
 export interface HashSuite {
   /** Hashes the incoming input. */
-  hash(inp: string): string;
+  hash(inp: string): Promise<string>;
   /** Compares the two hashes. */
-  compare(plainText: string, hash: string): boolean;
+  compare(plainText: string, hash: string): Promise<boolean>;
 }

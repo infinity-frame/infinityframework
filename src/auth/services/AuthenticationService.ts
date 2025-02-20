@@ -1,5 +1,5 @@
 import { Session } from "../models/Session.js";
-import { UserCredentialsInput } from "../validation/UserValidation.js";
+import { UserCredentialsInput } from "../validation/AuthenticationValidation.js";
 import { SessionService } from "./SessionService.js";
 import { UserService } from "./UserService.js";
 

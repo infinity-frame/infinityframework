@@ -1,6 +1,6 @@
 import { Session } from "../models/Session.js";
 import { User } from "../models/User.js";
-import { TokenSuite } from "../repositories/Repository.js";
+import { TokenSuite } from "../lib/TokenSuites.ts/TokenSuite.js";
 import {
   CreateSession,
   SessionRepository,

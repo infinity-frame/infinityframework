@@ -23,3 +23,9 @@ export class AuthenticationException extends Error {
     super(msg);
   }
 }
+
+export class ValidationException extends Error {
+  constructor(issues: Array<any>, msg?: string) {
+    super(msg);
+  }
+}

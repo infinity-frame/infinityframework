@@ -1,7 +1,3 @@
-export interface TokenSuite {
-  generateToken(payload?: object): string;
-}
-
 export interface Repository<TModel, TCreate, TUpdate, TFilter> {
   /** Creates and returns the created object. */
   create(inp: TCreate): Promise<TModel>;
