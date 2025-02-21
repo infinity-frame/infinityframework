@@ -1,14 +1,37 @@
-import { AuthenticationException, NotFoundException } from "../exceptions.js";
+import { AlphaNumericRegex } from "../regexes.js";
+import {
+  AuthenticationException,
+  NotFoundException,
+  ValidationException,
+} from "../exceptions.js";
 import { HashSuite } from "../lib/HashSuites/HashSuite.js";
 import { User } from "../models/User.js";
-import { UserRepository } from "../repositories/UserRepository.js";
+import { CreateUser, UserRepository } from "../repositories/UserRepository.js";
 import { UserCredentialsInput } from "../validation/AuthenticationValidation.js";
+import { CreateUserInput } from "../validation/UserValidation.js";
+import { z } from "zod";
+
+export interface UserView {
+  username: string;
+  createdAt: string;
+  id: string;
+}
+
+const PasswordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
 
 export class UserService {
   constructor(
     private userRepository: UserRepository,
     private passwordHashSuite: HashSuite
   ) {}
+
+  private mapUserView(user: User): UserView {
+    return {
+      username: user.username,
+      id: user.id,
+      createdAt: user.createdAt.toISOString(),
+    };
+  }
 
   public async verifyCredentials(
     userCredentials: UserCredentialsInput
@@ -30,5 +53,41 @@ export class UserService {
     }
 
     return user;
+  }
+
+  public async createUser(createUserInput: CreateUserInput): Promise<UserView> {
+    const usernameValidation = z
+      .string()
+      .min(3)
+      .regex(AlphaNumericRegex)
+      .safeParse(createUserInput.username);
+    if (!usernameValidation.success) {
+      throw new ValidationException(
+        usernameValidation.error.issues,
+        "Username must be at least 3 characters."
+      );
+    }
+
+    const passwordValidation = z
+      .string()
+      .regex(PasswordRegex)
+      .safeParse(createUserInput.password);
+    if (!passwordValidation.success) {
+      throw new ValidationException(
+        passwordValidation.error.issues,
+        "Password must be at least 8 characters with at least 1 uppercase, lowercase, digit and special character."
+      );
+    }
+    const passwordHash = await this.passwordHashSuite.hash(
+      createUserInput.password
+    );
+
+    const createUser: CreateUser = {
+      username: createUserInput.username,
+      passwordHash,
+    };
+    const user = await this.userRepository.create(createUser);
+
+    return this.mapUserView(user);
   }
 }

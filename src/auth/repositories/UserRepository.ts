@@ -10,17 +10,17 @@ import {
 } from "mongodb";
 import { RepositoryException } from "../exceptions.js";
 
-interface CreateUser {
+export interface CreateUser {
   username: string;
   passwordHash: string;
 }
 
-interface UpdateUser {
+export interface UpdateUser {
   username?: string;
   passwordHash?: string;
 }
 
-interface UserFilter {
+export interface UserFilter {
   id?: string;
   username?: string;
 }
