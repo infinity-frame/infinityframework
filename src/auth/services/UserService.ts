@@ -40,7 +40,7 @@ export class UserService {
       await this.userRepository.find({ username: userCredentials.username })
     )[0];
     if (typeof user === "undefined") {
-      throw new NotFoundException();
+      throw new AuthenticationException();
     }
 
     if (

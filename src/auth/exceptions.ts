@@ -25,7 +25,7 @@ export class AuthenticationException extends Error {
 }
 
 export class ValidationException extends Error {
-  constructor(issues: Array<any>, msg?: string) {
+  constructor(public readonly issues: Array<any>, msg?: string) {
     super(msg);
   }
 }

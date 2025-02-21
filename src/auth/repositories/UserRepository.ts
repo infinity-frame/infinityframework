@@ -65,10 +65,10 @@ export class MongoUserRepository implements UserRepository {
   }
 
   private mapUserFilter(filter: UserFilter): MongoUserFilter {
-    let _id: ObjectId | undefined;
-    if (filter.id) {
+    const mongoFilter: MongoUserFilter = {};
+    if (typeof filter.id !== "undefined") {
       try {
-        _id = new ObjectId(filter.id);
+        mongoFilter._id = new ObjectId(filter.id);
       } catch (err) {
         throw new RepositoryException(
           err,
@@ -77,7 +77,10 @@ export class MongoUserRepository implements UserRepository {
       }
     }
 
-    return { _id, username: filter.username };
+    if (typeof filter.username !== "undefined")
+      mongoFilter.username = filter.username;
+
+    return mongoFilter;
   }
 
   public async create(inp: CreateUser): Promise<User> {
