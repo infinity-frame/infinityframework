@@ -16,3 +16,7 @@ await client.db("admin").command({ ping: 1 });
 logger.info(`Connection to db ${uri} successfully initialized`);
 
 export const db = client.db("if");
+
+export async function closeDbClient(): Promise<void> {
+  await client.close();
+}

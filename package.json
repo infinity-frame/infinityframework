@@ -8,7 +8,8 @@
     "dev:package": "tsc --watch",
     "dev:app": "nodemon index.ts | pino-pretty",
     "build": "cd src && tsc",
-    "test": "npm run build && jest"
+    "test": "npm run build && jest",
+    "cli": "cd src && npm run cli"
   },
   "keywords": [],
   "author": "",

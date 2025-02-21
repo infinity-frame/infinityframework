@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "cli": "node dist/cli.js"
   },
   "repository": {
     "type": "git",
@@ -31,6 +31,7 @@
   "homepage": "https://github.com/infinity-frame/infinityframework#readme",
   "description": "",
   "dependencies": {
+    "@inquirer/prompts": "^7.3.2",
     "bcrypt": "^5.1.1",
     "express": "^4.21.1",
     "mongodb": "^6.12.0",

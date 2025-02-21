@@ -5,7 +5,7 @@ import {
   UserCredentialsValidator,
 } from "../validation/AuthenticationValidation.js";
 
-export class AuthController {
+export class AuthWebController {
   constructor(private authenticationService: AuthenticationService) {}
 
   public async login(req: Request, res: Response) {

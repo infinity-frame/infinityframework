@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response, Router } from "express";
-import { AuthController } from "../controllers/AuthController.js";
+import { AuthWebController } from "../controllers/AuthWebController.js";
 
-export function AuthRouterFactory(authController: AuthController): Router {
+export function AuthRouterFactory(authController: AuthWebController): Router {
   const router = Router();
 
   router.post(

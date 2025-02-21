@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response, RequestHandler } from "express";
-import { AuthController } from "../controllers/AuthController.js";
+import { AuthWebController } from "../controllers/AuthWebController.js";
 
 export function AuthMiddlewareFactory(
-  authController: AuthController
+  authController: AuthWebController
 ): RequestHandler {
   return async (req: Request, res: Response, next: NextFunction) => {
     // TODO
