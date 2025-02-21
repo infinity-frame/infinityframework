@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response, RequestHandler } from "express";
 import { AuthWebController } from "../controllers/AuthWebController.js";
-import createHttpError, { isHttpError } from "http-errors";
+import { isHttpError } from "http-errors";
 import logger from "../../lib/logger.js";
 
 export function AuthMiddlewareFactory(

@@ -1,3 +1,3 @@
-import { Core } from "./Core.js";
+import { AppFactory } from "./App.js";
 
-export default Core;
+export default AppFactory;

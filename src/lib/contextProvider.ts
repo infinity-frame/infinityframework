@@ -3,7 +3,6 @@ import { Module } from "../models/Module.js";
 import { Collection } from "mongodb";
 import { db } from "./db.js";
 import { event } from "./eventEmitter.js";
-import semver from "semver";
 
 interface ModulesList {
   [key: string]: {

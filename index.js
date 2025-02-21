@@ -1,6 +1,6 @@
 import "dotenv/config";
 import ifcore from "./src/dist/index.js";
 
-const app = new ifcore();
+const app = await ifcore();
 
-app.event.addListener("init", () => {});
+app.events.addListener("init", () => {});

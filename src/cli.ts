@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 import { select } from "@inquirer/prompts";
 import { LoadAuthCli } from "./auth/index.js";
-import { closeDbClient, db } from "./lib/db.js";
+import { DbFactory } from "./lib/db.js";
 
 (async () => {
+  const { db, closeClient } = await DbFactory("mongodb://localhost:27017");
+
   const cliOption = await select({
     message: "Select a CLI",
     choices: [{ name: "Auth CLI", value: "auth" }],
@@ -18,6 +20,6 @@ import { closeDbClient, db } from "./lib/db.js";
       break;
   }
 
-  await closeDbClient();
+  await closeClient();
   return;
 })();
