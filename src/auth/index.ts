@@ -12,6 +12,7 @@ import { MongoUserRepository } from "./repositories/UserRepository.js";
 import { Sha512TokenSuite } from "./lib/TokenSuites/Sha512TokenSuite.js";
 import { AuthCliController } from "./controllers/AuthCliController.js";
 import { RunCliFactory } from "./cli/AuthCli.js";
+import { AuthorizationService } from "./services/AuthorizationService.js";
 
 /** Primary loader for the auth module */
 
@@ -39,9 +40,16 @@ export const LoadAuthModule = (db: Db): Auth => {
     userService,
     sessionService
   );
+  const authorizationService = new AuthorizationService(
+    sessionService,
+    userService
+  );
 
   /** Controller */
-  const authController = new AuthWebController(authenticationService);
+  const authController = new AuthWebController(
+    authenticationService,
+    authorizationService
+  );
 
   return {
     router: AuthRouterFactory(authController),

@@ -1,11 +1,7 @@
-import { UserCredentialsDTO } from "./authValidation.ts";
-
-interface RequestValues {
-  UserCredentials: UserCredentialsDTO;
-}
+import { User } from "./models/User.ts";
 
 declare module "express-serve-static-core" {
   interface Request {
-    ifvalues: RequestValues;
+    user: User;
   }
 }

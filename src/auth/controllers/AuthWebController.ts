@@ -7,14 +7,19 @@ import {
 import createHttpError, { HttpError } from "http-errors";
 import {
   AuthenticationException,
+  AuthorizationException,
   ConflictException,
   NotFoundException,
   RepositoryException,
   ValidationException,
 } from "../exceptions.js";
+import { AuthorizationService } from "../services/AuthorizationService.js";
 
 export class AuthWebController {
-  constructor(private authenticationService: AuthenticationService) {}
+  constructor(
+    private authenticationService: AuthenticationService,
+    private authorizationService: AuthorizationService
+  ) {}
 
   private mapExceptionToHttpError(err: unknown): HttpError {
     if (err instanceof RepositoryException) {
@@ -34,6 +39,9 @@ export class AuthWebController {
         issues: err.issues,
       });
     }
+    if (err instanceof AuthorizationException) {
+      return createHttpError(401);
+    }
 
     return createHttpError(500, "Unexpected error occured", { err });
   }
@@ -49,6 +57,24 @@ export class AuthWebController {
         );
 
       res.status(201).send(session.token);
+    } catch (err) {
+      throw this.mapExceptionToHttpError(err);
+    }
+  }
+
+  public async authorize(req: Request, res: Response) {
+    try {
+      const authorizationHeader = req.headers["authorization"];
+      if (
+        typeof authorizationHeader === "undefined" ||
+        !authorizationHeader.startsWith("Bearer ")
+      ) {
+        throw new AuthorizationException();
+      }
+      const token = authorizationHeader.slice(7, authorizationHeader.length);
+
+      const user = await this.authorizationService.checkAuthorization(token);
+      req.user = user;
     } catch (err) {
       throw this.mapExceptionToHttpError(err);
     }

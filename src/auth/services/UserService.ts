@@ -90,4 +90,13 @@ export class UserService {
 
     return this.mapUserView(user);
   }
+
+  public async findUserById(id: string): Promise<User> {
+    const user = (await this.userRepository.find({ id }))[0];
+    if (typeof user === "undefined") {
+      throw new NotFoundException();
+    }
+
+    return user;
+  }
 }

@@ -57,10 +57,11 @@ export class MongoSessionRepository implements SessionRepository {
   }
 
   private mapFilter(filter: SessionFilter): MongoSessionFilter {
-    let _id: ObjectId | undefined;
+    const mongoFilter: MongoSessionFilter = {};
+
     if (typeof filter.id !== "undefined") {
       try {
-        _id = new ObjectId(filter.id);
+        mongoFilter._id = new ObjectId(filter.id);
       } catch (err) {
         throw new RepositoryException(
           err,
@@ -69,7 +70,11 @@ export class MongoSessionRepository implements SessionRepository {
       }
     }
 
-    return { _id, token: filter.token, userId: filter.userId };
+    if (typeof filter.token !== "undefined") mongoFilter.token = filter.token;
+    if (typeof filter.userId !== "undefined")
+      mongoFilter.userId = filter.userId;
+
+    return mongoFilter;
   }
 
   private mapSession(mongoSession: MongoSession): Session {
