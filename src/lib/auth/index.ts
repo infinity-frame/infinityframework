@@ -13,10 +13,11 @@ import { Sha512TokenSuite } from "./lib/TokenSuites/Sha512TokenSuite.js";
 import { AuthCliController } from "./controllers/AuthCliController.js";
 import { RunCliFactory } from "./cli/AuthCli.js";
 import { AuthorizationService } from "./services/AuthorizationService.js";
+import { Logger } from "pino";
 
 /** Primary loader for the auth module */
 
-interface Auth {
+export interface Auth {
   router: Router;
   middleware: RequestHandler;
 }
@@ -28,7 +29,7 @@ const passwordHashSuite = new BcryptHashSuite();
 const tokenHashSuite = new Sha512TokenSuite();
 
 /** Loads the auth and returns a new auth router and middleware. */
-export const LoadAuthModule = async (db: Db): Promise<Auth> => {
+export const LoadAuthModule = async (db: Db, logger: Logger): Promise<Auth> => {
   /** Repositories */
   const sessionRepository = new MongoSessionRepository(db);
   const userRepository = await MongoUserRepositoryFactory(db);
@@ -53,8 +54,8 @@ export const LoadAuthModule = async (db: Db): Promise<Auth> => {
   );
 
   return {
-    router: AuthRouterFactory(authController),
-    middleware: AuthMiddlewareFactory(authController),
+    router: AuthRouterFactory(authController, logger),
+    middleware: AuthMiddlewareFactory(authController, logger),
   };
 };
 

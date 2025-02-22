@@ -1,10 +1,11 @@
 import { NextFunction, Request, Response, RequestHandler } from "express";
 import { AuthWebController } from "../controllers/AuthWebController.js";
 import { isHttpError } from "http-errors";
-import logger from "../../lib/logger.js";
+import { Logger } from "pino";
 
 export function AuthMiddlewareFactory(
-  authController: AuthWebController
+  authController: AuthWebController,
+  logger: Logger
 ): RequestHandler {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {

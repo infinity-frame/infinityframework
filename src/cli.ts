@@ -1,10 +1,16 @@
-#!/usr/bin/env node
 import { select } from "@inquirer/prompts";
-import { LoadAuthCli } from "./auth/index.js";
+import { LoadAuthCli } from "./lib/auth/index.js";
 import { DbFactory } from "./lib/db.js";
+import { pino } from "pino";
+import { ManifestFactory } from "./lib/Manifest.js";
+
+/** CLI entrypoint */
 
 (async () => {
-  const { db, closeClient } = await DbFactory("mongodb://localhost:27017");
+  const logger = pino({ transport: { target: "pino-pretty" } });
+  const manifest = ManifestFactory();
+
+  const { db, closeClient } = await DbFactory(manifest, logger);
 
   const cliOption = await select({
     message: "Select a CLI",

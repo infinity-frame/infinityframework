@@ -1,12 +1,18 @@
 import { Collection, Db, MongoClient } from "mongodb";
-import logger from "./logger.js";
+import { Logger } from "pino";
+import { Manifest } from "./Manifest.js";
 
 export interface Database {
   db: Db;
   closeClient: () => Promise<void>;
 }
 
-export async function DbFactory(uri: string): Promise<Database> {
+export async function DbFactory(
+  manifest: Manifest,
+  logger: Logger
+): Promise<Database> {
+  const uri: string = manifest.dbUri;
+
   logger.info(`Initializing connection to db ${uri}`);
   const client = new MongoClient(uri);
   await client.connect();

@@ -12,5 +12,8 @@
   "dependencies": {
     "express": "^5.0.0"
   },
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "typescript": "^5.7.3"
+  }
 }

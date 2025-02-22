@@ -5,10 +5,11 @@
   "main": "index.js",
   "scripts": {
     "dev:package": "tsc --watch",
-    "dev:app": "nodemon dist/index.js | pino-pretty",
+    "dev:app": "nodemon dist/server.js | pino-pretty",
     "build": "tsc",
     "test": "npm run build && jest",
-    "cli": "node dist/cli.js"
+    "cli": "node dist/cli.js",
+    "start": "node dist/server.js"
   },
   "keywords": [],
   "author": "",
