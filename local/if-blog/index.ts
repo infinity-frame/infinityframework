@@ -1,5 +1,6 @@
 import express, { NextFunction, Request, Response } from "express";
 import { ModuleInitializer } from "../../dist/types.js";
+import { setTimeout } from "node:timers/promises";
 
 const moduleInitializer: ModuleInitializer = async (context) => {
   const router = express.Router();
@@ -15,13 +16,19 @@ const moduleInitializer: ModuleInitializer = async (context) => {
   return {
     router,
     methods: {
-      stuff() {
+      async handlePosts(req: Request) {
+        // Extract parameters
+        console.log(req.params.postId);
+
+        // Supports asynchronous code
+        await setTimeout(1);
+
         return [{ something: "else" }];
       },
     },
     // TY 🐄 ONO TO FUNGUJE NA PRVNÍ POKUS!!!!!! 🤓🤓🤓🤓🤓🤓🤓🤓
     contexts: {
-      posts: "stuff",
+      posts: "handlePosts",
     },
   };
 };

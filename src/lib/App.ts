@@ -131,12 +131,12 @@ function ViewContextGetterFactory(
     });
   }
 
-  return async (): Promise<object> => {
+  return async (req: Request): Promise<object> => {
     const viewContext: { [contextKey: string]: any } = {};
 
     for (const contextMethodMapping of contextMethodMappings) {
       viewContext[contextMethodMapping.identifier] =
-        await contextMethodMapping.method();
+        await contextMethodMapping.method(req);
     }
 
     return viewContext;
@@ -158,7 +158,7 @@ function PublicRouterFactory(
     router.get(
       viewDeclaration.path,
       async (req: Request, res: Response, next: NextFunction) => {
-        const viewContext = await viewContextGetter();
+        const viewContext = await viewContextGetter(req);
 
         res.render(viewDeclaration.view, { context: viewContext });
       }
