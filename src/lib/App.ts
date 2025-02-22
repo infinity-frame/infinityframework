@@ -13,6 +13,7 @@ import {
 } from "./AppConfiguration.js";
 import { existsSync } from "fs";
 import path from "path";
+import { AppInitializationException } from "./Exceptions.js";
 
 function registerModuleRouter(router: Router, module: Module) {
   router.use(
@@ -91,17 +92,75 @@ function ModuleAssetsRouterFactory(modules: Module[]): Router {
   return router;
 }
 
+function ViewContextGetterFactory(
+  viewDeclaration: ViewDeclaration,
+  appContext: AppContext
+) {
+  const contextMethodMappings: { identifier: string; method: Function }[] = [];
+  for (const contextKey of viewDeclaration.context) {
+    const moduleVendor = contextKey.split(".")[0];
+    const moduleName = contextKey.split(".")[1];
+    const contextIdentifier = contextKey.split(".")[2];
+
+    if (
+      typeof moduleVendor !== "string" ||
+      typeof moduleName !== "string" ||
+      typeof contextIdentifier !== "string"
+    )
+      throw new AppInitializationException(
+        `Invalid context key format ${contextKey} in view declaration ${viewDeclaration.path}`
+      );
+
+    const module = appContext.modules.find(
+      (m) => m.config.vendor === moduleVendor && m.config.name === moduleName
+    );
+    if (typeof module === "undefined")
+      throw new AppInitializationException(
+        `Module defined in context ${contextKey} not found for view declaration ${viewDeclaration.path}`
+      );
+
+    const methodKey = module.exports.contexts[contextIdentifier];
+    if (typeof methodKey === "undefined")
+      throw new AppInitializationException(
+        `Module defined in context ${contextKey} doesn't provide the specified context mapping for view declaration ${viewDeclaration.path}`
+      );
+
+    contextMethodMappings.push({
+      identifier: contextIdentifier,
+      method: module.exports.methods[methodKey],
+    });
+  }
+
+  return async (): Promise<object> => {
+    const viewContext: { [contextKey: string]: any } = {};
+
+    for (const contextMethodMapping of contextMethodMappings) {
+      viewContext[contextMethodMapping.identifier] =
+        await contextMethodMapping.method();
+    }
+
+    return viewContext;
+  };
+}
+
 function PublicRouterFactory(
   viewDeclarations: ViewDeclaration[],
+  appContext: AppContext,
   logger: Logger
 ): Router {
   const router = Router();
 
   for (const viewDeclaration of viewDeclarations) {
+    const viewContextGetter = ViewContextGetterFactory(
+      viewDeclaration,
+      appContext
+    );
     router.get(
       viewDeclaration.path,
       async (req: Request, res: Response, next: NextFunction) => {
-        res.render(viewDeclaration.view);
+        const viewContext = await viewContextGetter();
+
+        res.render(viewDeclaration.view, { context: viewContext });
       }
     );
   }
@@ -148,7 +207,7 @@ export function AppFactory(
   app.use("/assets", ModuleAssetsRouterFactory(modules));
 
   app.set("view engine", "ejs");
-  app.use("/", PublicRouterFactory(manifest.views, logger));
+  app.use("/", PublicRouterFactory(manifest.views, appContext, logger));
 
   app.listen(manifest.port);
   logger.info(`App listening on ${manifest.port}`);

@@ -15,7 +15,13 @@ const moduleInitializer: ModuleInitializer = async (context) => {
   return {
     router,
     methods: {
-      stuff() {},
+      stuff() {
+        return [{ something: "else" }];
+      },
+    },
+    // TY 🐄 ONO TO FUNGUJE NA PRVNÍ POKUS!!!!!! 🤓🤓🤓🤓🤓🤓🤓🤓
+    contexts: {
+      posts: "stuff",
     },
   };
 };

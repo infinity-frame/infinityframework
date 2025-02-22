@@ -16,7 +16,8 @@
     },
     {
       "path": "/something/completely/else",
-      "view": "some-page"
+      "view": "some-page",
+      "context": ["infinityframe.blog.posts"]
     }
   ]
 }

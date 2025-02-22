@@ -15,3 +15,9 @@ export class ModuleInitializationException extends Error {
     super(msg);
   }
 }
+
+export class AppInitializationException extends Error {
+  constructor(msg: string) {
+    super(msg);
+  }
+}
