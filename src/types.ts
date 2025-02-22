@@ -1,4 +1,4 @@
-import { ModuleExports, ModuleSetupContext } from "./lib/Module.ts";
+import { ModuleExports, ModuleSetupContext } from "./lib/Module.js";
 
 export type ModuleInitializer = (
   context: ModuleSetupContext

@@ -1,11 +1,15 @@
-import express from "express";
-import { ModuleInitializer } from "../../src/types.js";
+import express, { NextFunction, Request, Response } from "express";
+import { ModuleInitializer } from "../../dist/types.js";
 
 const moduleInitializer: ModuleInitializer = async (context) => {
   const router = express.Router();
 
   context.app.events.addListener("initialized", () => {
     context.logger.info(context.app.modules);
+  });
+
+  router.get("/ping", (req: Request, res: Response, next: NextFunction) => {
+    res.send("pong");
   });
 
   return {
