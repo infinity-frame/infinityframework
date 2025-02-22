@@ -10,10 +10,14 @@ import authStore from "../stores/auth";
 const handleLogin = async (event) => {
   event.preventDefault();
   const formData = new FormData(event.target);
-  const email = formData.get("email");
+  const username = formData.get("username");
   const password = formData.get("password");
 
-  await authStore.login(email, password);
+  try {
+    await authStore.login(username, password);
+  } catch (error) {
+    alert("Přihlášení se nezdařilo.");
+  }
 };
 </script>
 
@@ -22,10 +26,10 @@ const handleLogin = async (event) => {
     <p>Vítejte v administračním systému InfinityFrameworku!</p>
     <form @submit="handleLogin">
       <TextInput
-        name="email"
-        placeholder="Email"
-        icon="mail"
-        type="email"
+        name="username"
+        placeholder="Uživatelské jméno"
+        icon="person"
+        type="text"
         required
       />
       <TextInput

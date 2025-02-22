@@ -3,49 +3,69 @@ import { reactive } from "vue";
 const authStore = reactive({
   currentUser: null,
 
-  async login(email, password) {
-    // TODO: Send request to backend when it is ready.
+  async login(username, password) {
+    const response = await fetch(import.meta.env.VITE_API_URL + "/auth", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username, password }),
+    });
 
-    // Simulate login
-    this.currentUser = {
-      email,
-    };
-    localStorage.setItem("refreshToken", "dummyRefreshToken");
+    if (!response.ok) {
+      throw await response.json();
+    }
+
+    const authToken = await response.text();
+    localStorage.setItem("authToken", authToken);
+
+    await this.getSession();
   },
 
   async logout() {
-    // TODO: Send request to backend when it is ready.
+    const response = await fetch(import.meta.env.VITE_API_URL + "/auth", {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+      },
+    });
 
-    // Simulate logout
+    if (!response.ok) {
+      throw await response.json();
+    }
+
     this.currentUser = null;
-    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("authToken");
   },
 
-  async changePassword(oldPassword, newPassword) {
-    // TODO: Send request to backend when it is ready.
+  async getSession() {
+    const authToken = localStorage.getItem("authToken");
+    if (!authToken) return;
 
-    // Simulate logout after password change
-    this.currentUser = null;
-    localStorage.removeItem("refreshToken");
-  },
+    /*
+    const response = await fetch(import.meta.env.VITE_API_URL + "/me", {
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      if (response.status === 401) {
+        localStorage.removeItem("authToken");
+        return;
+      }
+      throw data;
+    }
+    */
 
-  async changeEmail(newEmail) {
-    // TODO: Send request to backend when it is ready.
-
-    // Simulate email change
-    this.currentUser.email = newEmail;
-  },
-
-  async refreshSession() {
-    const refreshToken = localStorage.getItem("refreshToken");
-    if (!refreshToken) return;
-
-    // TODO: Send request to backend when it is ready.
-
-    // Simulate session refresh
-    this.currentUser = {
-      email: "ahojky@ahojky.cz",
+    //Example data
+    const data = {
+      username: "admin",
+      createdAt: "2025-02-22T08:40:55.273Z",
+      id: "507f1f77bcf86cd799439011",
     };
+
+    this.currentUser = data;
   },
 });
 

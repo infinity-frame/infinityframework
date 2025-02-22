@@ -59,7 +59,7 @@ components:
 security:
   - BearerAuth: []
 paths:
-  /auth:
+  /session:
     post:
       tags:
         - Auth

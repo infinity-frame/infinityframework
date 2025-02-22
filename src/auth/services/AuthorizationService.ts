@@ -4,6 +4,11 @@ import { User } from "../models/User.js";
 import { SessionService } from "./SessionService.js";
 import { UserService } from "./UserService.js";
 
+export interface Authorization {
+  user: User;
+  session: Session;
+}
+
 export class AuthorizationService {
   constructor(
     private sessionService: SessionService,
@@ -22,7 +27,7 @@ export class AuthorizationService {
     return null;
   }
 
-  public async checkAuthorization(token: string): Promise<User> {
+  public async checkAuthorization(token: string): Promise<Authorization> {
     let session: Session;
     try {
       session = await this.sessionService.findSessionByToken(token);
@@ -45,6 +50,6 @@ export class AuthorizationService {
       throw new AuthorizationException();
     }
 
-    return user;
+    return { user, session };
   }
 }

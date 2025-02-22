@@ -12,10 +12,13 @@ onMounted(() => {
   window.addEventListener("message", (event) => {
     try {
       const data = JSON.parse(event.data);
-      if (data.type === "get_access_token") {
-        console.log("Sending access token");
+      if (data.type === "get_auth_token") {
+        console.log("Sending auth token");
         iframe.value.contentWindow.postMessage(
-          JSON.stringify({ type: "access_token", value: "123" }),
+          JSON.stringify({
+            type: "auth_token",
+            value: localStorage.getItem("authToken"),
+          }),
           "*"
         );
       }

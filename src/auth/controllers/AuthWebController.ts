@@ -14,12 +14,29 @@ import {
   ValidationException,
 } from "../exceptions.js";
 import { AuthorizationService } from "../services/AuthorizationService.js";
+import { SessionService } from "../services/SessionService.js";
+import { User } from "../models/User.js";
+
+interface UserView {
+  username: string;
+  createdAt: string;
+  id: string;
+}
 
 export class AuthWebController {
   constructor(
     private authenticationService: AuthenticationService,
-    private authorizationService: AuthorizationService
+    private authorizationService: AuthorizationService,
+    private sessionService: SessionService
   ) {}
+
+  private mapUserToView(user: User) {
+    return {
+      username: user.username,
+      id: user.id,
+      createdAt: user.createdAt.toISOString(),
+    };
+  }
 
   private mapExceptionToHttpError(err: unknown): HttpError {
     if (err instanceof RepositoryException) {
@@ -62,6 +79,24 @@ export class AuthWebController {
     }
   }
 
+  public async logout(req: Request, res: Response) {
+    try {
+      await this.sessionService.deleteSessionByToken(req.session.token);
+      res.status(204).send();
+    } catch (err) {
+      throw this.mapExceptionToHttpError(err);
+    }
+  }
+
+  public async identify(req: Request, res: Response) {
+    try {
+      const userView: UserView = this.mapUserToView(req.user);
+      res.json(userView);
+    } catch (err) {
+      throw this.mapExceptionToHttpError(err);
+    }
+  }
+
   public async authorize(req: Request, res: Response) {
     try {
       const authorizationHeader = req.headers["authorization"];
@@ -73,8 +108,11 @@ export class AuthWebController {
       }
       const token = authorizationHeader.slice(7, authorizationHeader.length);
 
-      const user = await this.authorizationService.checkAuthorization(token);
-      req.user = user;
+      const authorization = await this.authorizationService.checkAuthorization(
+        token
+      );
+      req.user = authorization.user;
+      req.session = authorization.session;
     } catch (err) {
       throw this.mapExceptionToHttpError(err);
     }

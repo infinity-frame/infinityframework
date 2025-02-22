@@ -11,27 +11,14 @@ import { UserCredentialsInput } from "../validation/AuthenticationValidation.js"
 import { CreateUserInput } from "../validation/UserValidation.js";
 import { z } from "zod";
 
-export interface UserView {
-  username: string;
-  createdAt: string;
-  id: string;
-}
-
-const PasswordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
+export const PasswordRegex =
+  /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
 
 export class UserService {
   constructor(
     private userRepository: UserRepository,
     private passwordHashSuite: HashSuite
   ) {}
-
-  private mapUserView(user: User): UserView {
-    return {
-      username: user.username,
-      id: user.id,
-      createdAt: user.createdAt.toISOString(),
-    };
-  }
 
   public async verifyCredentials(
     userCredentials: UserCredentialsInput
@@ -55,7 +42,7 @@ export class UserService {
     return user;
   }
 
-  public async createUser(createUserInput: CreateUserInput): Promise<UserView> {
+  public async createUser(createUserInput: CreateUserInput): Promise<User> {
     const usernameValidation = z
       .string()
       .min(3)
@@ -88,7 +75,7 @@ export class UserService {
     };
     const user = await this.userRepository.create(createUser);
 
-    return this.mapUserView(user);
+    return user;
   }
 
   public async findUserById(id: string): Promise<User> {
