@@ -95,7 +95,8 @@ export class MongoUserRepository implements UserRepository {
     };
 
     try {
-      await this.UserCollection.insertOne(mongoUser);
+      const res = await this.UserCollection.insertOne(mongoUser);
+      console.log(res);
     } catch (err) {
       throw new RepositoryException(err);
     }

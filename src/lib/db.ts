@@ -11,9 +11,11 @@ export async function DbFactory(uri: string): Promise<Database> {
   const client = new MongoClient(uri);
   await client.connect();
 
-  const db = client.db("admin");
-  await db.command({ ping: 1 });
+  const adminDb = client.db("admin");
+  await adminDb.command({ ping: 1 });
   logger.info(`Connection to db ${uri} successfully initialized`);
+
+  const db = client.db("if");
 
   const closeClient = async () => await client.close();
   return { db, closeClient };
