@@ -90,6 +90,8 @@ export function AppFactory(
     AppConfigurationFactory(appContext);
   app.use("/api", APIRouterFactory(modules, auth, appConfiguration, logger));
 
+  app.use("/static", express.static("public"));
+
   app.listen(manifest.port);
   logger.info(`App listening on ${manifest.port}`);
 
