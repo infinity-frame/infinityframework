@@ -7,7 +7,7 @@ import "@infinity-frame/infinitycomponent/styles/main.scss";
 import "./style.css";
 
 const init = async () => {
-  await authStore.refreshSession();
+  await authStore.getSession();
 
   const app = createApp(App);
   app.use(router);

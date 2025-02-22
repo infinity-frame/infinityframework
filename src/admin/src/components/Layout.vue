@@ -9,7 +9,7 @@ const route = useRoute();
 <template>
   <Sidebar
     title="IF Admin"
-    :currentUserEmail="authStore.currentUser?.email"
+    :currentUser="authStore.currentUser?.username"
     :currentPath="route.path"
     :links="[
       { label: 'Blog', icon: 'blog', to: '/blog' },

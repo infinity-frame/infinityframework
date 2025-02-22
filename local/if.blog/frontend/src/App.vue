@@ -11,43 +11,43 @@ import {
 } from "@infinity-frame/infinitycomponent";
 import { onMounted, onUnmounted, ref } from "vue";
 
-const accessToken = ref(null);
-const waitingForAccessToken = ref(false);
+const authToken = ref(null);
+const waitingForAuthToken = ref(false);
 
-const requestAccessToken = () => {
-  window.top.postMessage(JSON.stringify({ type: "get_access_token" }), "*");
-  waitingForAccessToken.value = true;
+const requestAuthToken = () => {
+  window.top.postMessage(JSON.stringify({ type: "get_auth_token" }), "*");
+  waitingForAuthToken.value = true;
 };
 
-const waitForAccessToken = async () => {
-  if (!accessToken.value && waitingForAccessToken.value) {
+const waitForAuthToken = async () => {
+  if (!authToken.value && waitingForAuthToken.value) {
     await new Promise((resolve) => setTimeout(resolve, 200));
-    await waitForAccessToken();
+    await waitForAuthToken();
   }
 };
 
 const authFetch = async (url, options) => {
-  if (!accessToken.value) {
-    requestAccessToken();
-    await waitForAccessToken();
+  if (!authToken.value) {
+    requestAuthToken();
+    await waitForAuthToken();
   }
 
   const response = await fetch(url, {
     ...options,
     headers: {
       ...options.headers,
-      Authorization: `Bearer ${accessToken.value}`,
+      Authorization: `Bearer ${authToken.value}`,
     },
   });
 
   if (response.status === 401) {
-    requestAccessToken();
-    await waitForAccessToken();
+    requestAuthToken();
+    await waitForAuthToken();
     return await fetch(url, {
       ...options,
       headers: {
         ...options.headers,
-        Authorization: `Bearer ${accessToken.value}`,
+        Authorization: `Bearer ${authToken.value}`,
       },
     });
   }
@@ -59,10 +59,10 @@ onMounted(() => {
   window.addEventListener("message", (event) => {
     try {
       const data = JSON.parse(event.data);
-      if (data.type === "access_token") {
-        console.log("Received access token", data.value);
-        accessToken.value = data.value;
-        waitingForAccessToken.value = false;
+      if (data.type === "auth_token") {
+        console.log("Received auth token", data.value);
+        authToken.value = data.value;
+        waitingForAuthToken.value = false;
       }
     } catch (error) {}
   });
@@ -96,9 +96,6 @@ const handleCreatePost = async () => {
 
   if (response.ok) {
     alert("Post byl úspěšně vytvořen.");
-    newTitle.value = "";
-    newCategory.value = "";
-    newContent.value = "";
   } else {
     alert("Něco se pokazilo.");
   }
