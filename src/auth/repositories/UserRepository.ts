@@ -4,11 +4,13 @@ import {
   Collection,
   Db,
   DeleteResult,
+  MongoError,
+  MongoServerError,
   ObjectId,
   UpdateFilter,
   UpdateResult,
 } from "mongodb";
-import { RepositoryException } from "../exceptions.js";
+import { ConflictException, RepositoryException } from "../exceptions.js";
 
 export interface CreateUser {
   username: string;
@@ -45,9 +47,9 @@ interface MongoUser {
   createdAt: Date;
 }
 
-export class MongoUserRepository implements UserRepository {
+class MongoUserRepository implements UserRepository {
   static collectionName: string = "if-users";
-  private UserCollection: Collection<MongoUser>;
+  public readonly UserCollection: Collection<MongoUser>;
 
   constructor(db: Db) {
     this.UserCollection = db.collection<MongoUser>(
@@ -95,9 +97,11 @@ export class MongoUserRepository implements UserRepository {
     };
 
     try {
-      const res = await this.UserCollection.insertOne(mongoUser);
-      console.log(res);
+      await this.UserCollection.insertOne(mongoUser);
     } catch (err) {
+      if (err instanceof MongoServerError && err.code === 11000) {
+        throw new ConflictException();
+      }
       throw new RepositoryException(err);
     }
 
@@ -147,4 +151,23 @@ export class MongoUserRepository implements UserRepository {
 
     return res.deletedCount;
   }
+}
+
+export async function MongoUserRepositoryFactory(db: Db) {
+  const repository = new MongoUserRepository(db);
+
+  /** Build the username unique index. */
+  const indexes = await repository.UserCollection.indexes();
+  if (
+    typeof indexes.find(
+      (indexDescription) => indexDescription.name === "username_uniqueness"
+    ) === "undefined"
+  ) {
+    await repository.UserCollection.createIndex(
+      { username: 1 },
+      { unique: true, name: "username_uniqueness" }
+    );
+  }
+
+  return repository;
 }

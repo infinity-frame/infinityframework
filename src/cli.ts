@@ -13,7 +13,9 @@ import { DbFactory } from "./lib/db.js";
 
   switch (cliOption) {
     case "auth":
-      await LoadAuthCli(db)();
+      await (
+        await LoadAuthCli(db)
+      )();
       break;
     default:
       console.error("No CLI option specified");

@@ -8,7 +8,7 @@ import { UserService } from "./services/UserService.js";
 import { Db } from "mongodb";
 import { AuthMiddlewareFactory } from "./middleware/AuthMiddleware.js";
 import { BcryptHashSuite } from "./lib/HashSuites/bcrypt.js";
-import { MongoUserRepository } from "./repositories/UserRepository.js";
+import { MongoUserRepositoryFactory } from "./repositories/UserRepository.js";
 import { Sha512TokenSuite } from "./lib/TokenSuites/Sha512TokenSuite.js";
 import { AuthCliController } from "./controllers/AuthCliController.js";
 import { RunCliFactory } from "./cli/AuthCli.js";
@@ -28,10 +28,10 @@ const passwordHashSuite = new BcryptHashSuite();
 const tokenHashSuite = new Sha512TokenSuite();
 
 /** Loads the auth and returns a new auth router and middleware. */
-export const LoadAuthModule = (db: Db): Auth => {
+export const LoadAuthModule = async (db: Db): Promise<Auth> => {
   /** Repositories */
   const sessionRepository = new MongoSessionRepository(db);
-  const userRepository = new MongoUserRepository(db);
+  const userRepository = await MongoUserRepositoryFactory(db);
 
   /** Services */
   const sessionService = new SessionService(sessionRepository, tokenHashSuite);
@@ -58,9 +58,9 @@ export const LoadAuthModule = (db: Db): Auth => {
   };
 };
 
-export const LoadAuthCli = (db: Db): AuthCli => {
+export const LoadAuthCli = async (db: Db): Promise<AuthCli> => {
   /** Repositories */
-  const userRepository = new MongoUserRepository(db);
+  const userRepository = await MongoUserRepositoryFactory(db);
 
   /** Services */
   const userService = new UserService(userRepository, passwordHashSuite);
