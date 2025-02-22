@@ -1,6 +1,6 @@
 import { LoggerFactory } from "./lib/Logger.js";
 import { ManifestFactory } from "./lib/Manifest.js";
-import { DbFactory } from "./lib/Db.js";
+import { DbFactory } from "./lib/Database.js";
 import { AppFactory } from "./lib/App.js";
 import { LoadAuthModule } from "./lib/auth/index.js";
 import { Module, ModuleFactory } from "./lib/Module.js";

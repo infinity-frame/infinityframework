@@ -1,6 +1,6 @@
 import { select } from "@inquirer/prompts";
 import { LoadAuthCli } from "./lib/auth/index.js";
-import { DbFactory } from "./lib/Db.js";
+import { DbFactory } from "./lib/Database.js";
 import { pino } from "pino";
 import { ManifestFactory } from "./lib/Manifest.js";
 
