@@ -48,7 +48,8 @@ export const LoadAuthModule = (db: Db): Auth => {
   /** Controller */
   const authController = new AuthWebController(
     authenticationService,
-    authorizationService
+    authorizationService,
+    sessionService
   );
 
   return {
