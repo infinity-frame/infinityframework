@@ -1,12 +1,11 @@
 <script setup>
 import { useRoute } from "vue-router";
-import { onMounted, ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 
 const iframe = ref(null);
 
 const route = useRoute();
-const moduleName = route.params.moduleName;
-console.log(moduleName);
+const moduleName = route.params.moduleName; // TODO: Implement this once backend is ready
 
 onMounted(() => {
   window.addEventListener("message", (event) => {
@@ -34,6 +33,10 @@ onMounted(() => {
       }
     } catch (error) {}
   });
+});
+
+onUnmounted(() => {
+  window.removeEventListener("message");
 });
 </script>
 

@@ -17,6 +17,10 @@ export default function useApi() {
     }
   };
 
+  const requestApiUrl = () => {
+    window.top.postMessage(JSON.stringify({ type: "get_api_url" }), "*");
+  };
+
   const authFetch = async (url, options) => {
     if (!authToken.value) {
       requestAuthToken();
@@ -30,18 +34,6 @@ export default function useApi() {
         Authorization: `Bearer ${authToken.value}`,
       },
     });
-
-    if (response.status === 401) {
-      requestAuthToken();
-      await waitForAuthToken();
-      response = await fetch(url, {
-        ...options,
-        headers: {
-          ...options.headers,
-          Authorization: `Bearer ${authToken.value}`,
-        },
-      });
-    }
 
     return response;
   };
@@ -65,7 +57,7 @@ export default function useApi() {
 
   onMounted(() => {
     window.addEventListener("message", messageHandler);
-    window.top.postMessage(JSON.stringify({ type: "get_api_url" }), "*");
+    requestApiUrl();
   });
 
   onUnmounted(() => {
