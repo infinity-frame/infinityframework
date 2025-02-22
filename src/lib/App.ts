@@ -1,5 +1,5 @@
 import express, { ErrorRequestHandler, Router } from "express";
-import { Manifest } from "./Manifest.js";
+import { Manifest, ViewDeclaration } from "./Manifest.js";
 import { Auth } from "./auth/index.js";
 import cors from "cors";
 import { Logger } from "pino";
@@ -91,6 +91,43 @@ function ModuleAssetsRouterFactory(modules: Module[]): Router {
   return router;
 }
 
+function PublicRouterFactory(
+  viewDeclarations: ViewDeclaration[],
+  logger: Logger
+): Router {
+  const router = Router();
+
+  for (const viewDeclaration of viewDeclarations) {
+    router.get(
+      viewDeclaration.path,
+      async (req: Request, res: Response, next: NextFunction) => {
+        res.render(viewDeclaration.view);
+      }
+    );
+  }
+
+  // 404
+  router.use((req: Request, res: Response, next: NextFunction) => {
+    next(createHttpError(404));
+  });
+
+  router.use(
+    (err: unknown, req: Request, res: Response, next: NextFunction) => {
+      if (isHttpError(err) && err.expose) {
+        res.status(404).render("errors/404");
+      } else {
+        logger.error(
+          err,
+          "InfinityFramework public error handler caught an unexpected error."
+        );
+        res.status(500).render("errors/500.ejs");
+      }
+    }
+  );
+
+  return router;
+}
+
 /** Primary initializer */
 export function AppFactory(
   manifest: Manifest,
@@ -109,6 +146,9 @@ export function AppFactory(
 
   app.use("/static", express.static("public"));
   app.use("/assets", ModuleAssetsRouterFactory(modules));
+
+  app.set("view engine", "ejs");
+  app.use("/", PublicRouterFactory(manifest.views, logger));
 
   app.listen(manifest.port);
   logger.info(`App listening on ${manifest.port}`);

@@ -8,5 +8,15 @@
       "source": "local",
       "name": "if-blog"
     }
+  ],
+  "views": [
+    {
+      "path": "/",
+      "view": "index"
+    },
+    {
+      "path": "/something/completely/else",
+      "view": "some-page"
+    }
   ]
 }
