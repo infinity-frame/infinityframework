@@ -4,13 +4,16 @@ const authStore = reactive({
   currentUser: null,
 
   async login(username, password) {
-    const response = await fetch(import.meta.env.VITE_API_URL + "/auth", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ username, password }),
-    });
+    const response = await fetch(
+      import.meta.env.VITE_API_URL + "/auth/session",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password }),
+      }
+    );
 
     if (!response.ok) {
       throw await response.json();
@@ -23,12 +26,15 @@ const authStore = reactive({
   },
 
   async logout() {
-    const response = await fetch(import.meta.env.VITE_API_URL + "/auth", {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-      },
-    });
+    const response = await fetch(
+      import.meta.env.VITE_API_URL + "/auth/session",
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+      }
+    );
 
     if (!response.ok) {
       throw await response.json();
@@ -42,8 +48,7 @@ const authStore = reactive({
     const authToken = localStorage.getItem("authToken");
     if (!authToken) return;
 
-    /*
-    const response = await fetch(import.meta.env.VITE_API_URL + "/me", {
+    const response = await fetch(import.meta.env.VITE_API_URL + "/auth/me", {
       headers: {
         Authorization: `Bearer ${authToken}`,
       },
@@ -56,14 +61,6 @@ const authStore = reactive({
       }
       throw data;
     }
-    */
-
-    //Example data
-    const data = {
-      username: "admin",
-      createdAt: "2025-02-22T08:40:55.273Z",
-      id: "507f1f77bcf86cd799439011",
-    };
 
     this.currentUser = data;
   },
