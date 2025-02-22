@@ -119,15 +119,9 @@ function ViewContextGetterFactory(
         `Module defined in context ${contextKey} not found for view declaration ${viewDeclaration.path}`
       );
 
-    const methodKey = module.exports.contexts[contextIdentifier];
-    if (typeof methodKey === "undefined")
-      throw new AppInitializationException(
-        `Module defined in context ${contextKey} doesn't provide the specified context mapping for view declaration ${viewDeclaration.path}`
-      );
-
     contextMethodMappings.push({
       identifier: contextIdentifier,
-      method: module.exports.methods[methodKey],
+      method: module.exports.contexts[contextIdentifier],
     });
   }
 

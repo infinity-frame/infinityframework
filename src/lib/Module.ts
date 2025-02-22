@@ -31,15 +31,13 @@ export interface ModuleSetupContext {
   app: AppContext;
 }
 
-interface ModuleMethods {
-  [fnName: string]: Function;
-}
-
 export interface ModuleExports {
   router: Router;
-  methods: ModuleMethods;
+  methods: {
+    [methodName: string]: Function;
+  };
   contexts: {
-    [key: string]: keyof ModuleMethods;
+    [contextKey: string]: Function;
   };
 }
 

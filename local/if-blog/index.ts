@@ -16,7 +16,12 @@ const moduleInitializer: ModuleInitializer = async (context) => {
   return {
     router,
     methods: {
-      async handlePosts(req: Request) {
+      stuff() {
+        return "yup, works";
+      },
+    },
+    contexts: {
+      async posts(req: Request) {
         // Extract parameters
         console.log(req.params.postId);
 
@@ -25,10 +30,6 @@ const moduleInitializer: ModuleInitializer = async (context) => {
 
         return [{ something: "else" }];
       },
-    },
-    // TY 🐄 ONO TO FUNGUJE NA PRVNÍ POKUS!!!!!! 🤓🤓🤓🤓🤓🤓🤓🤓
-    contexts: {
-      posts: "handlePosts",
     },
   };
 };
