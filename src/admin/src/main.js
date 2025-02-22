@@ -7,7 +7,11 @@ import "@infinity-frame/infinitycomponent/styles/main.scss";
 import "./style.css";
 
 const init = async () => {
-  await authStore.getSession();
+  try {
+    await authStore.getSession();
+  } catch (error) {
+    alert("Nepodařilo se načíst uživatele");
+  }
 
   const app = createApp(App);
   app.use(router);

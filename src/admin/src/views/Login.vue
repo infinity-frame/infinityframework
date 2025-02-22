@@ -13,7 +13,11 @@ const handleLogin = async (event) => {
   const username = formData.get("username");
   const password = formData.get("password");
 
-  await authStore.login(username, password);
+  try {
+    await authStore.login(username, password);
+  } catch (error) {
+    alert("Přihlášení se nezdařilo.");
+  }
 };
 </script>
 

@@ -50,6 +50,10 @@ const authStore = reactive({
     });
     const data = await response.json();
     if (!response.ok) {
+      if (response.status === 401) {
+        localStorage.removeItem("authToken");
+        return;
+      }
       throw data;
     }
     */

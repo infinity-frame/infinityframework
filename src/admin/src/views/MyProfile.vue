@@ -9,7 +9,11 @@ import {
 import authStore from "../stores/auth";
 
 const handleLogout = async () => {
-  await authStore.logout();
+  try {
+    await authStore.logout();
+  } catch (error) {
+    alert("Odhlášení se nezdařilo.");
+  }
 };
 </script>
 
