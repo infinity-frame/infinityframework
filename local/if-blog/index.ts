@@ -32,8 +32,13 @@ export default moduleInitializer;
 //   const router = express.Router();
 //   router.use(express.json());
 
+//   router.get("/ping", async (req, res) => {
+//     console.log(await globals.exports.if.blog.retrievePosts());
+
+//     res.send("The module is mounted!");
+//   });
+
 //   router.post("/post", async (req, res) => {
-//     console.log(req.body);
 //     const { title, category, content } = req.body;
 
 //     if (
@@ -51,7 +56,11 @@ export default moduleInitializer;
 //       content,
 //     });
 
-//     res.send(result);
+//     const insertedPost = await module.collections.posts.findOne({
+//       _id: result.insertedId,
+//     });
+
+//     res.status(201).json(insertedPost);
 //   });
 
 //   router.get("/post", async (req, res) => {
@@ -60,17 +69,24 @@ export default moduleInitializer;
 //     res.send(posts);
 //   });
 
-//   router.get("/post/:id", async (req, res) => {
-//     const post = await module.collections.posts.findOne({
-//       _id: module.mongo.ObjectId(req.params.id),
+//   router.delete("/post/:id", async (req, res) => {
+//     const { id } = req.params;
+
+//     if (!ObjectId.isValid(id)) {
+//       res.status(400).json({ error: "Invalid ID" });
+//       return;
+//     }
+
+//     const result = await module.collections.posts.deleteOne({
+//       _id: new ObjectId(id),
 //     });
 
-//     if (!post) {
+//     if (result.deletedCount === 0) {
 //       res.status(404).json({ error: "Post not found" });
 //       return;
 //     }
 
-//     res.send(post);
+//     res.status(204).end();
 //   });
 
 //   const retrievePosts = async () => {
