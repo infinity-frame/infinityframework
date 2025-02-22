@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "path";
-import { ManifestInitializationException } from "./exceptions.js";
+import { ManifestInitializationException } from "./Exceptions.js";
 
 interface ManifestInput {
   name?: unknown;

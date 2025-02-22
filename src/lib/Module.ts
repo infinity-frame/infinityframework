@@ -5,7 +5,7 @@ import { Collection, Db } from "mongodb";
 import { Router } from "express";
 import { ModuleDeclaration } from "./Manifest.js";
 import { Logger } from "pino";
-import { ModuleInitializationException } from "./exceptions.js";
+import { ModuleInitializationException } from "./Exceptions.js";
 import { ModuleInitializer } from "../types.js";
 import { ModuleLoggerFactory } from "./Logger.js";
 
