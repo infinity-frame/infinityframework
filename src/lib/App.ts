@@ -96,7 +96,12 @@ function ViewContextGetterFactory(
   viewDeclaration: ViewDeclaration,
   appContext: AppContext
 ) {
-  const contextMethodMappings: { identifier: string; method: Function }[] = [];
+  const contextMethodMappings: {
+    moduleVendor: string;
+    moduleName: string;
+    contextIdentifier: string;
+    method: Function;
+  }[] = [];
   for (const contextKey of viewDeclaration.context) {
     const moduleVendor = contextKey.split(".")[0];
     const moduleName = contextKey.split(".")[1];
@@ -120,7 +125,9 @@ function ViewContextGetterFactory(
       );
 
     contextMethodMappings.push({
-      identifier: contextIdentifier,
+      moduleVendor,
+      moduleName,
+      contextIdentifier,
       method: module.exports.contexts[contextIdentifier],
     });
   }
@@ -129,7 +136,20 @@ function ViewContextGetterFactory(
     const viewContext: { [contextKey: string]: any } = {};
 
     for (const contextMethodMapping of contextMethodMappings) {
-      viewContext[contextMethodMapping.identifier] =
+      if (!viewContext[contextMethodMapping.moduleVendor])
+        viewContext[contextMethodMapping.moduleVendor] = {};
+      if (
+        !viewContext[contextMethodMapping.moduleVendor][
+          contextMethodMapping.moduleName
+        ]
+      )
+        viewContext[contextMethodMapping.moduleVendor][
+          contextMethodMapping.moduleName
+        ] = {};
+
+      viewContext[contextMethodMapping.moduleVendor][
+        contextMethodMapping.moduleName
+      ][contextMethodMapping.contextIdentifier] =
         await contextMethodMapping.method(req);
     }
 
