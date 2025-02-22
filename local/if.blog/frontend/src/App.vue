@@ -1,4 +1,6 @@
 <script setup>
+import { ref, watch } from "vue";
+import useApi from "./useApi";
 import {
   Heading,
   Box,
@@ -8,73 +10,15 @@ import {
   Button,
   Actions,
   NormalLayout,
+  ColumnsLayout,
 } from "@infinity-frame/infinitycomponent";
-import { onMounted, onUnmounted, ref } from "vue";
 
-const authToken = ref(null);
-const waitingForAuthToken = ref(false);
-
-const requestAuthToken = () => {
-  window.top.postMessage(JSON.stringify({ type: "get_auth_token" }), "*");
-  waitingForAuthToken.value = true;
-};
-
-const waitForAuthToken = async () => {
-  if (!authToken.value && waitingForAuthToken.value) {
-    await new Promise((resolve) => setTimeout(resolve, 200));
-    await waitForAuthToken();
-  }
-};
-
-const authFetch = async (url, options) => {
-  if (!authToken.value) {
-    requestAuthToken();
-    await waitForAuthToken();
-  }
-
-  const response = await fetch(url, {
-    ...options,
-    headers: {
-      ...options.headers,
-      Authorization: `Bearer ${authToken.value}`,
-    },
-  });
-
-  if (response.status === 401) {
-    requestAuthToken();
-    await waitForAuthToken();
-    return await fetch(url, {
-      ...options,
-      headers: {
-        ...options.headers,
-        Authorization: `Bearer ${authToken.value}`,
-      },
-    });
-  }
-
-  return response;
-};
-
-onMounted(() => {
-  window.addEventListener("message", (event) => {
-    try {
-      const data = JSON.parse(event.data);
-      if (data.type === "auth_token") {
-        console.log("Received auth token", data.value);
-        authToken.value = data.value;
-        waitingForAuthToken.value = false;
-      }
-    } catch (error) {}
-  });
-});
-
-onUnmounted(() => {
-  window.removeEventListener("message");
-});
+const { apiUrl, authFetch } = useApi();
 
 const newTitle = ref("");
 const newCategory = ref("");
 const newContent = ref("");
+const posts = ref([]);
 
 const handleCreatePost = async () => {
   if (!newTitle.value || !newCategory.value || !newContent.value) {
@@ -82,7 +26,7 @@ const handleCreatePost = async () => {
     return;
   }
 
-  const response = await authFetch("http://localhost:3000/api/if/blog/post", {
+  const response = await authFetch(apiUrl.value + "/if/blog/post", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -95,11 +39,47 @@ const handleCreatePost = async () => {
   });
 
   if (response.ok) {
-    alert("Post byl úspěšně vytvořen.");
+    alert("Příspěvek byl úspěšně vytvořen.");
+    posts.value = [...posts.value, await response.json()];
   } else {
     alert("Něco se pokazilo.");
   }
 };
+
+const handleGetPosts = async () => {
+  const response = await authFetch(apiUrl.value + "/if/blog/post", {
+    method: "GET",
+  });
+
+  if (response.ok) {
+    posts.value = await response.json();
+  } else {
+    alert("Něco se pokazilo.");
+  }
+};
+
+const handleRemovePost = async (id) => {
+  if (!confirm("Opravdu chcete smazat tento příspěvek?")) {
+    return;
+  }
+
+  const response = await authFetch(apiUrl.value + `/if/blog/post/${id}`, {
+    method: "DELETE",
+  });
+
+  if (response.ok) {
+    alert("Příspěvek byl úspěšně smazán.");
+    posts.value = posts.value.filter((post) => post._id !== id);
+  } else {
+    alert("Něco se pokazilo.");
+  }
+};
+
+watch(apiUrl, (newValue) => {
+  if (newValue) {
+    handleGetPosts();
+  }
+});
 </script>
 
 <template>
@@ -137,5 +117,21 @@ const handleCreatePost = async () => {
         />
       </Actions>
     </Box>
+
+    <Heading :semanticLevel="3">Příspěvky</Heading>
+
+    <ColumnsLayout :columns="2">
+      <Box v-for="post in posts" :key="post._id" :title="post.title">
+        <p>Kategorie: {{ post.category }}</p>
+        <Actions>
+          <Button
+            color="danger"
+            label="Smazat"
+            icon="delete"
+            @click="() => handleRemovePost(post._id)"
+          />
+        </Actions>
+      </Box>
+    </ColumnsLayout>
   </NormalLayout>
 </template>

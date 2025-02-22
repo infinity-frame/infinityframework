@@ -22,6 +22,16 @@ onMounted(() => {
           "*"
         );
       }
+      if (data.type === "get_api_url") {
+        console.log("Sending API URL");
+        iframe.value.contentWindow.postMessage(
+          JSON.stringify({
+            type: "api_url",
+            value: import.meta.env.VITE_API_URL,
+          }),
+          "*"
+        );
+      }
     } catch (error) {}
   });
 });
