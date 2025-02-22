@@ -14,7 +14,7 @@ import { AppContext } from "./lib/AppContext.js";
   const manifest = ManifestFactory();
   const database = await DbFactory(manifest, logger);
 
-  const appContext = new AppContext();
+  const appContext = new AppContext(manifest);
   const modules: Module[] = [];
   for (const module of manifest.modules) {
     modules.push(await ModuleFactory(module, appContext, database.db));
@@ -23,7 +23,7 @@ import { AppContext } from "./lib/AppContext.js";
 
   const auth = await LoadAuthModule(database.db, logger);
 
-  const app = AppFactory(manifest, modules, auth, logger);
+  const app = AppFactory(manifest, modules, auth, appContext, logger);
 
   appContext.events.emit("initialized");
   logger.info(`InfinityFramework initialization complete`);

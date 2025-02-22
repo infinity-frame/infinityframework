@@ -6,6 +6,11 @@ import { Logger } from "pino";
 import { Module } from "./Module.js";
 import createHttpError, { isHttpError } from "http-errors";
 import { NextFunction, Request, Response } from "express";
+import { AppContext } from "./AppContext.js";
+import {
+  AppConfiguration,
+  AppConfigurationFactory,
+} from "./AppConfiguration.js";
 
 function registerModuleRouter(router: Router, module: Module) {
   router.use(
@@ -31,15 +36,29 @@ function DefaultErrorHandlerFactory(logger: Logger): ErrorRequestHandler {
   };
 }
 
+function registerAppConfigurationRoute(
+  router: Router,
+  appConfiguration: AppConfiguration
+) {
+  router.get(
+    "/configuration",
+    (req: Request, res: Response, next: NextFunction) => {
+      res.json(appConfiguration);
+    }
+  );
+}
+
 function APIRouterFactory(
   modules: Module[],
   auth: Auth,
+  appConfiguration: AppConfiguration,
   logger: Logger
 ): Router {
   const router = Router();
 
   router.use("/auth", auth.router);
   router.use(auth.middleware);
+  registerAppConfigurationRoute(router, appConfiguration);
 
   for (const module of modules) {
     registerModuleRouter(router, module);
@@ -60,13 +79,16 @@ export function AppFactory(
   manifest: Manifest,
   modules: Module[],
   auth: Auth,
+  appContext: AppContext,
   logger: Logger
 ) {
   const app = express();
 
   app.use(cors({ origin: manifest.origin }));
 
-  app.use("/api", APIRouterFactory(modules, auth, logger));
+  const appConfiguration: AppConfiguration =
+    AppConfigurationFactory(appContext);
+  app.use("/api", APIRouterFactory(modules, auth, appConfiguration, logger));
 
   app.listen(manifest.port);
   logger.info(`App listening on ${manifest.port}`);
