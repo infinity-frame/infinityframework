@@ -39,6 +39,7 @@ export interface ModuleExports {
 export interface Module {
   config: ModuleConfiguration;
   exports: ModuleExports;
+  path: string;
 }
 
 function parseModuleConfiguration(
@@ -124,5 +125,6 @@ export async function ModuleFactory(
   return {
     config: moduleConfiguration,
     exports,
+    path: modulePath,
   };
 }

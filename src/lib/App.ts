@@ -11,6 +11,8 @@ import {
   AppConfiguration,
   AppConfigurationFactory,
 } from "./AppConfiguration.js";
+import { existsSync } from "fs";
+import path from "path";
 
 function registerModuleRouter(router: Router, module: Module) {
   router.use(
@@ -74,6 +76,21 @@ function APIRouterFactory(
   return router;
 }
 
+function ModuleAssetsRouterFactory(modules: Module[]): Router {
+  const router = Router();
+
+  for (const module of modules) {
+    if (existsSync(path.join(module.path, "assets/"))) {
+      router.use(
+        `/${module.config.vendor}/${module.config.name}`,
+        express.static(path.join(module.path, "assets/"))
+      );
+    }
+  }
+
+  return router;
+}
+
 /** Primary initializer */
 export function AppFactory(
   manifest: Manifest,
@@ -91,6 +108,7 @@ export function AppFactory(
   app.use("/api", APIRouterFactory(modules, auth, appConfiguration, logger));
 
   app.use("/static", express.static("public"));
+  app.use("/assets", ModuleAssetsRouterFactory(modules));
 
   app.listen(manifest.port);
   logger.info(`App listening on ${manifest.port}`);
