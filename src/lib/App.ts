@@ -124,6 +124,11 @@ function ViewContextGetterFactory(
         `Module defined in context ${contextKey} not found for view declaration ${viewDeclaration.path}`
       );
 
+    if (typeof module.exports.contexts[contextIdentifier] !== "function")
+      throw new AppInitializationException(
+        `Module defined in context ${contextKey} doesn't export a function for the provided contextIdentifier \`${contextIdentifier}\`, view declaration ${viewDeclaration.path}`
+      );
+
     contextMethodMappings.push({
       moduleVendor,
       moduleName,
@@ -172,9 +177,12 @@ function PublicRouterFactory(
     router.get(
       viewDeclaration.path,
       async (req: Request, res: Response, next: NextFunction) => {
-        const viewContext = await viewContextGetter(req);
-
-        res.render(viewDeclaration.view, { context: viewContext });
+        try {
+          const viewContext = await viewContextGetter(req);
+          res.render(viewDeclaration.view, { context: viewContext });
+        } catch (err) {
+          next(err);
+        }
       }
     );
   }
@@ -193,7 +201,7 @@ function PublicRouterFactory(
           err,
           "InfinityFramework public error handler caught an unexpected error."
         );
-        res.status(500).render("errors/500.ejs");
+        res.status(500).render("errors/500");
       }
     }
   );

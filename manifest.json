@@ -18,6 +18,11 @@
       "path": "/something/:postId/else",
       "view": "some-page",
       "context": ["infinityframe.blog.posts"]
+    },
+    {
+      "path": "/path-that-errors",
+      "view": "some-page",
+      "context": ["infinityframe.blog.error"]
     }
   ]
 }

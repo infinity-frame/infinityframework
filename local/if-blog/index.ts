@@ -1,6 +1,7 @@
 import express, { NextFunction, Request, Response } from "express";
 import { ModuleInitializer } from "../../dist/types.js";
 import { setTimeout } from "node:timers/promises";
+import createHttpError from "http-errors";
 
 const moduleInitializer: ModuleInitializer = async (context) => {
   const router = express.Router();
@@ -29,6 +30,9 @@ const moduleInitializer: ModuleInitializer = async (context) => {
         await setTimeout(1);
 
         return [{ something: "else" }];
+      },
+      error() {
+        throw createHttpError(404);
       },
     },
   };
