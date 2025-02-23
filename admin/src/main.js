@@ -9,6 +9,7 @@ import "./style.css";
 const init = async () => {
   try {
     await authStore.getSession();
+    await authStore.getConfig();
   } catch (error) {
     alert("Nepodařilo se načíst uživatele");
   }

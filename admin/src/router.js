@@ -24,7 +24,7 @@ const routes = [
         },
       },
       {
-        path: "/:moduleName",
+        path: "/:moduleVendor/:moduleName",
         name: "Module",
         component: () => import("./views/Module.vue"),
         meta: {

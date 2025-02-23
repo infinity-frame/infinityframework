@@ -5,7 +5,9 @@ import { onMounted, onUnmounted, ref } from "vue";
 const iframe = ref(null);
 
 const route = useRoute();
-const moduleName = route.params.moduleName; // TODO: Implement this once backend is ready
+const moduleVendor = route.params.moduleVendor;
+const moduleName = route.params.moduleName;
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 const messageHandler = (event) => {
   try {
@@ -25,7 +27,7 @@ const messageHandler = (event) => {
       iframe.value.contentWindow.postMessage(
         JSON.stringify({
           type: "api_url",
-          value: import.meta.env.VITE_API_URL,
+          value: import.meta.env.VITE_BACKEND_URL,
         }),
         "*"
       );
@@ -44,7 +46,7 @@ onUnmounted(() => {
 
 <template>
   <iframe
-    :src="`http://localhost:5174/`"
+    :src="`${backendUrl}/assets/${moduleVendor}/${moduleName}`"
     class="module-view"
     ref="iframe"
   ></iframe>

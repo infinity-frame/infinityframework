@@ -1,4 +1,5 @@
 <script setup>
+import { onMounted, ref } from "vue";
 import { useRoute, RouterLink } from "vue-router";
 import { Sidebar, NormalLayout } from "@infinity-frame/infinitycomponent";
 import authStore from "../stores/auth";
@@ -11,11 +12,12 @@ const route = useRoute();
     title="IF Admin"
     :currentUser="authStore.currentUser?.username"
     :currentPath="route.path"
-    :links="[
-      { label: 'Blog', icon: 'blog', to: '/blog' },
-      { label: 'Produkty', icon: 'product', to: '/products' },
-      { label: 'Objednávky', icon: 'order', to: '/orders' },
-    ]"
+    :links="
+      authStore?.config?.modules.map((module) => ({
+        label: module.name.charAt(0).toUpperCase() + module.name.slice(1),
+        to: `/${module.vendor}/${module.name}`,
+      }))
+    "
     :RouterLink="RouterLink"
   />
   <NormalLayout>
