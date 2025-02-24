@@ -26,17 +26,20 @@ const handleCreatePost = async () => {
     return;
   }
 
-  const response = await authFetch(apiUrl.value + "/if/blog/post", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      title: newTitle.value,
-      category: newCategory.value,
-      content: newContent.value,
-    }),
-  });
+  const response = await authFetch(
+    apiUrl.value + "/api/infinityframe/blog/post",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        title: newTitle.value,
+        category: newCategory.value,
+        content: newContent.value,
+      }),
+    }
+  );
 
   if (response.ok) {
     alert("Příspěvek byl úspěšně vytvořen.");
@@ -47,9 +50,12 @@ const handleCreatePost = async () => {
 };
 
 const handleGetPosts = async () => {
-  const response = await authFetch(apiUrl.value + "/if/blog/post", {
-    method: "GET",
-  });
+  const response = await authFetch(
+    apiUrl.value + "/api/infinityframe/blog/post",
+    {
+      method: "GET",
+    }
+  );
 
   if (response.ok) {
     posts.value = await response.json();
@@ -63,9 +69,12 @@ const handleRemovePost = async (id) => {
     return;
   }
 
-  const response = await authFetch(apiUrl.value + `/if/blog/post/${id}`, {
-    method: "DELETE",
-  });
+  const response = await authFetch(
+    apiUrl.value + `/api/infinityframe/blog/post/${id}`,
+    {
+      method: "DELETE",
+    }
+  );
 
   if (response.ok) {
     alert("Příspěvek byl úspěšně smazán.");
