@@ -30,6 +30,12 @@ export class AuthorizationException extends Error {
   }
 }
 
+export class ForbiddenException extends Error {
+  constructor(msg?: string) {
+    super(msg);
+  }
+}
+
 export class ValidationException extends Error {
   constructor(public readonly issues: Array<any>, msg?: string) {
     super(msg);

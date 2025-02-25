@@ -5,11 +5,12 @@ import { Logger } from "pino";
 
 export function AuthMiddlewareFactory(
   authController: AuthWebController,
-  logger: Logger
+  logger: Logger,
+  permission?: string
 ): RequestHandler {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
-      await authController.authorize(req, res);
+      await authController.authorize(req, res, permission);
       next();
     } catch (err) {
       if (isHttpError(err) && err.status === 401) {

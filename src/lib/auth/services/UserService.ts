@@ -10,6 +10,7 @@ import { CreateUser, UserRepository } from "../repositories/UserRepository.js";
 import { UserCredentialsInput } from "../validation/AuthenticationValidation.js";
 import { CreateUserInput } from "../validation/UserValidation.js";
 import { z } from "zod";
+import { AppContext } from "../../AppContext.js";
 
 export const PasswordRegex =
   /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
@@ -17,8 +18,51 @@ export const PasswordRegex =
 export class UserService {
   constructor(
     private userRepository: UserRepository,
-    private passwordHashSuite: HashSuite
+    private passwordHashSuite: HashSuite,
+    private appContext: AppContext
   ) {}
+
+  public checkPermission(user: User, permission: string): boolean {
+    if (
+      user.permissions.includes("global") ||
+      user.permissions.includes(permission)
+    ) {
+      return true;
+    }
+
+    return false;
+  }
+
+  private async fixOrphanPermissions(user: User): Promise<void> {
+    const orphanPermissionsFilter = (permission: string): boolean => {
+      if (
+        !this.appContext.modules.some(
+          (module) =>
+            `${module.config.vendor}.${module.config.name}` === permission ||
+            permission === "global"
+        )
+      ) {
+        return true;
+      }
+      return false;
+    };
+
+    const orphanPermissions: string[] = user.permissions.filter(
+      orphanPermissionsFilter
+    );
+    if (orphanPermissions.length !== 0) {
+      const validPermissions = user.permissions.filter(
+        (permission) => !orphanPermissions.includes(permission)
+      );
+
+      await this.userRepository.update(
+        { username: user.username },
+        { permissions: validPermissions }
+      );
+    }
+
+    return;
+  }
 
   public async verifyCredentials(
     userCredentials: UserCredentialsInput
@@ -72,6 +116,7 @@ export class UserService {
     const createUser: CreateUser = {
       username: createUserInput.username,
       passwordHash,
+      permissions: createUserInput.permissions || [],
     };
     const user = await this.userRepository.create(createUser);
 
