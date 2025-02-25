@@ -4,7 +4,7 @@
 	"description": "Web fullstack framework with a powerful",
 	"main": "index.js",
 	"scripts": {
-		"dev": "concurrently --name \"TypeScript Compiler\" \"tsc --watch\" --name \"Node Server\" \"nodemon dist/server.js | pino-pretty\"",
+		"dev": "concurrently \"tsc --watch\" \"nodemon dist/server.js | pino-pretty\"",
 		"dev:package": "tsc --watch",
 		"dev:app": "nodemon dist/server.js | pino-pretty",
 		"build": "tsc",
