@@ -16,11 +16,17 @@ export const PasswordRegex =
   /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
 
 export class UserService {
+  private validPermissions: string[];
+
   constructor(
     private userRepository: UserRepository,
     private passwordHashSuite: HashSuite,
     private appContext: AppContext
-  ) {}
+  ) {
+    this.validPermissions = appContext.modules.map(
+      (module) => `${module.config.vendor}.${module.config.name}`
+    );
+  }
 
   public checkPermission(user: User, permission: string): boolean {
     if (
@@ -33,35 +39,11 @@ export class UserService {
     return false;
   }
 
-  private async fixOrphanPermissions(user: User): Promise<void> {
-    const orphanPermissionsFilter = (permission: string): boolean => {
-      if (
-        !this.appContext.modules.some(
-          (module) =>
-            `${module.config.vendor}.${module.config.name}` === permission ||
-            permission === "global"
-        )
-      ) {
-        return true;
-      }
-      return false;
-    };
-
-    const orphanPermissions: string[] = user.permissions.filter(
-      orphanPermissionsFilter
-    );
-    if (orphanPermissions.length !== 0) {
-      const validPermissions = user.permissions.filter(
-        (permission) => !orphanPermissions.includes(permission)
-      );
-
-      await this.userRepository.update(
-        { username: user.username },
-        { permissions: validPermissions }
-      );
+  private checkPermissionExistence(permission: string): boolean {
+    if (this.validPermissions.includes(permission) || permission === "global") {
+      return true;
     }
-
-    return;
+    return false;
   }
 
   public async verifyCredentials(
@@ -97,6 +79,20 @@ export class UserService {
         usernameValidation.error.issues,
         "Username must be at least 3 characters."
       );
+    }
+
+    let permissions: string[] = [];
+    if (typeof createUserInput.permissions !== "undefined") {
+      if (
+        !createUserInput.permissions.every((permission) =>
+          this.checkPermissionExistence(permission)
+        )
+      )
+        throw new ValidationException(
+          [{ path: "permissions" }],
+          "One of the permissions didn't exist."
+        );
+      permissions = createUserInput.permissions;
     }
 
     const passwordValidation = z

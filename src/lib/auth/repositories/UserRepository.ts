@@ -46,7 +46,7 @@ interface MongoUser {
   username: string;
   passwordHash: string;
   createdAt: Date;
-  permissions?: string[];
+  permissions: string[];
 }
 
 class MongoUserRepository implements UserRepository {
@@ -65,7 +65,7 @@ class MongoUserRepository implements UserRepository {
       createdAt: mongoUser.createdAt,
       username: mongoUser.username,
       passwordHash: mongoUser.passwordHash,
-      permissions: mongoUser.permissions || [],
+      permissions: mongoUser.permissions,
     };
   }
 
