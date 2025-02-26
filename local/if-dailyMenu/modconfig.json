@@ -1,0 +1,6 @@
+{
+	"name": "dailyMenu",
+	"vendor": "infinityframe",
+	"version": "1.1.1",
+	"collections": ["dailyMenus"]
+}
