@@ -1,4 +1,8 @@
-import { AuthorizationException, NotFoundException } from "../exceptions.js";
+import {
+  AuthorizationException,
+  ForbiddenException,
+  NotFoundException,
+} from "../exceptions.js";
 import { Session } from "../models/Session.js";
 import { User } from "../models/User.js";
 import { SessionService } from "./SessionService.js";
@@ -27,7 +31,10 @@ export class AuthorizationService {
     return null;
   }
 
-  public async checkAuthorization(token: string): Promise<Authorization> {
+  public async checkAuthorization(
+    token: string,
+    permission?: string
+  ): Promise<Authorization> {
     let session: Session;
     try {
       session = await this.sessionService.findSessionByToken(token);
@@ -48,6 +55,13 @@ export class AuthorizationService {
       // The session exists, but the associated User doesn't.
       await this.deleteUncoupledSession(session);
       throw new AuthorizationException();
+    }
+
+    if (
+      typeof permission !== "undefined" &&
+      !this.userService.checkPermission(user, permission)
+    ) {
+      throw new ForbiddenException();
     }
 
     return { user, session };

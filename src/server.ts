@@ -5,6 +5,7 @@ import { AppFactory } from "./lib/App.js";
 import { LoadAuthModule } from "./lib/auth/index.js";
 import { Module, ModuleFactory } from "./lib/Module.js";
 import { AppContext } from "./lib/AppContext.js";
+import { LoadModules } from "./lib/ModulesLoader.js";
 
 /** Server entrypoint */
 
@@ -12,16 +13,12 @@ import { AppContext } from "./lib/AppContext.js";
   const logger = LoggerFactory();
 
   const manifest = ManifestFactory();
-  const database = await DbFactory(manifest, logger);
+  const { db } = await DbFactory(manifest, logger);
 
   const appContext = new AppContext(manifest);
-  const modules: Module[] = [];
-  for (const module of manifest.modules) {
-    modules.push(await ModuleFactory(module, appContext, database.db));
-  }
-  appContext.modules = modules;
+  const modules = await LoadModules(manifest, appContext, db);
 
-  const auth = await LoadAuthModule(database.db, logger);
+  const auth = await LoadAuthModule(db, appContext, logger);
 
   const app = AppFactory(manifest, modules, auth, appContext, logger);
 

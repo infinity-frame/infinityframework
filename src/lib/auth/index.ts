@@ -14,12 +14,13 @@ import { AuthCliController } from "./controllers/AuthCliController.js";
 import { RunCliFactory } from "./cli/AuthCli.js";
 import { AuthorizationService } from "./services/AuthorizationService.js";
 import { Logger } from "pino";
+import { AppContext } from "../AppContext.js";
 
 /** Primary loader for the auth module */
 
 export interface Auth {
   router: Router;
-  middleware: RequestHandler;
+  middleware: (permission?: string) => RequestHandler;
 }
 
 type AuthCli = () => Promise<undefined>;
@@ -29,14 +30,22 @@ const passwordHashSuite = new BcryptHashSuite();
 const tokenHashSuite = new Sha512TokenSuite();
 
 /** Loads the auth and returns a new auth router and middleware. */
-export const LoadAuthModule = async (db: Db, logger: Logger): Promise<Auth> => {
+export const LoadAuthModule = async (
+  db: Db,
+  appContext: AppContext,
+  logger: Logger
+): Promise<Auth> => {
   /** Repositories */
   const sessionRepository = new MongoSessionRepository(db);
   const userRepository = await MongoUserRepositoryFactory(db);
 
   /** Services */
   const sessionService = new SessionService(sessionRepository, tokenHashSuite);
-  const userService = new UserService(userRepository, passwordHashSuite);
+  const userService = new UserService(
+    userRepository,
+    passwordHashSuite,
+    appContext
+  );
   const authenticationService = new AuthenticationService(
     userService,
     sessionService
@@ -53,18 +62,29 @@ export const LoadAuthModule = async (db: Db, logger: Logger): Promise<Auth> => {
     sessionService
   );
 
+  const middlewareFactory = (permission?: string) => {
+    return AuthMiddlewareFactory(authController, logger, permission);
+  };
+
   return {
     router: AuthRouterFactory(authController, logger),
-    middleware: AuthMiddlewareFactory(authController, logger),
+    middleware: middlewareFactory,
   };
 };
 
-export const LoadAuthCli = async (db: Db): Promise<AuthCli> => {
+export const LoadAuthCli = async (
+  db: Db,
+  appContext: AppContext
+): Promise<AuthCli> => {
   /** Repositories */
   const userRepository = await MongoUserRepositoryFactory(db);
 
   /** Services */
-  const userService = new UserService(userRepository, passwordHashSuite);
+  const userService = new UserService(
+    userRepository,
+    passwordHashSuite,
+    appContext
+  );
 
   /** Controller */
   const authController = new AuthCliController(userService);

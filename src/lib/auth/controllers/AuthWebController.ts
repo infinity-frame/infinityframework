@@ -9,6 +9,7 @@ import {
   AuthenticationException,
   AuthorizationException,
   ConflictException,
+  ForbiddenException,
   NotFoundException,
   RepositoryException,
   ValidationException,
@@ -21,6 +22,7 @@ interface UserView {
   username: string;
   createdAt: string;
   id: string;
+  permissions: string[];
 }
 
 export class AuthWebController {
@@ -30,11 +32,12 @@ export class AuthWebController {
     private sessionService: SessionService
   ) {}
 
-  private mapUserToView(user: User) {
+  private mapUserToView(user: User): UserView {
     return {
       username: user.username,
       id: user.id,
       createdAt: user.createdAt.toISOString(),
+      permissions: user.permissions,
     };
   }
 
@@ -58,6 +61,9 @@ export class AuthWebController {
     }
     if (err instanceof AuthorizationException) {
       return createHttpError(401);
+    }
+    if (err instanceof ForbiddenException) {
+      return createHttpError(403);
     }
 
     return createHttpError(500, "Unexpected error occured", { err });
@@ -97,7 +103,7 @@ export class AuthWebController {
     }
   }
 
-  public async authorize(req: Request, res: Response) {
+  public async authorize(req: Request, res: Response, permission?: string) {
     try {
       const authorizationHeader = req.headers["authorization"];
       if (
@@ -109,7 +115,8 @@ export class AuthWebController {
       const token = authorizationHeader.slice(7, authorizationHeader.length);
 
       const authorization = await this.authorizationService.checkAuthorization(
-        token
+        token,
+        permission
       );
       req.user = authorization.user;
       req.session = authorization.session;

@@ -10,14 +10,16 @@ import { AppContext } from "./AppContext.js";
 import {
   AppConfiguration,
   AppConfigurationFactory,
+  projectAppConfiguration,
 } from "./AppConfiguration.js";
 import { existsSync } from "fs";
 import path from "path";
 import { AppInitializationException } from "./Exceptions.js";
 
-function registerModuleRouter(router: Router, module: Module) {
+function registerModuleRouter(router: Router, module: Module, auth: Auth) {
   router.use(
     `/${module.config.vendor}/${module.config.name}`,
+    auth.middleware(`${module.config.vendor}.${module.config.name}`),
     module.exports.router
   );
 }
@@ -41,12 +43,14 @@ function DefaultErrorHandlerFactory(logger: Logger): ErrorRequestHandler {
 
 function registerAppConfigurationRoute(
   router: Router,
-  appConfiguration: AppConfiguration
+  appConfiguration: AppConfiguration,
+  auth: Auth
 ) {
   router.get(
     "/configuration",
+    auth.middleware(),
     (req: Request, res: Response, next: NextFunction) => {
-      res.json(appConfiguration);
+      res.json(projectAppConfiguration(appConfiguration, req.user.permissions));
     }
   );
 }
@@ -60,11 +64,10 @@ function APIRouterFactory(
   const router = Router();
 
   router.use("/auth", auth.router);
-  router.use(auth.middleware);
-  registerAppConfigurationRoute(router, appConfiguration);
+  registerAppConfigurationRoute(router, appConfiguration, auth);
 
   for (const module of modules) {
-    registerModuleRouter(router, module);
+    registerModuleRouter(router, module, auth);
   }
 
   // 404

@@ -19,7 +19,29 @@ function mapModuleConfigurationView(module: Module): ModuleConfigurationView {
   };
 }
 
-export function AppConfigurationFactory(appContext: AppContext) {
+/** Returns a filtered AppConfiguration according to set permissions. */
+export const projectAppConfiguration = (
+  appConfiguration: AppConfiguration,
+  permissions: string[]
+): AppConfiguration => {
+  if (permissions.includes("global")) {
+    return appConfiguration;
+  }
+
+  const projectedModules: ModuleConfigurationView[] =
+    appConfiguration.modules.filter((module) =>
+      permissions.includes(`${module.vendor}.${module.name}`)
+    );
+
+  return {
+    name: appConfiguration.name,
+    modules: projectedModules,
+  };
+};
+
+export function AppConfigurationFactory(
+  appContext: AppContext
+): AppConfiguration {
   const moduleConfigurationViews: ModuleConfigurationView[] =
     appContext.modules.map((module) => mapModuleConfigurationView(module));
 
