@@ -9,6 +9,7 @@ import {
   AuthenticationException,
   AuthorizationException,
   ConflictException,
+  ForbiddenException,
   NotFoundException,
   RepositoryException,
   ValidationException,
@@ -60,6 +61,9 @@ export class AuthWebController {
     }
     if (err instanceof AuthorizationException) {
       return createHttpError(401);
+    }
+    if (err instanceof ForbiddenException) {
+      return createHttpError(403);
     }
 
     return createHttpError(500, "Unexpected error occured", { err });

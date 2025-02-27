@@ -13,8 +13,8 @@ export function AuthMiddlewareFactory(
       await authController.authorize(req, res, permission);
       next();
     } catch (err) {
-      if (isHttpError(err) && err.status === 401) {
-        res.status(401).json({
+      if (isHttpError(err) && err.expose) {
+        res.status(err.status).json({
           timestamp: new Date().toISOString(),
           message: err.message,
         });
