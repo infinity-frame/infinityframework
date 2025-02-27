@@ -10,6 +10,7 @@ import { AppContext } from "./AppContext.js";
 import {
   AppConfiguration,
   AppConfigurationFactory,
+  projectAppConfiguration,
 } from "./AppConfiguration.js";
 import { existsSync } from "fs";
 import path from "path";
@@ -49,7 +50,7 @@ function registerAppConfigurationRoute(
     "/configuration",
     auth.middleware(),
     (req: Request, res: Response, next: NextFunction) => {
-      res.json(appConfiguration);
+      res.json(projectAppConfiguration(appConfiguration, req.user.permissions));
     }
   );
 }
