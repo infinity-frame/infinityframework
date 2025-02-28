@@ -3,4 +3,5 @@ export interface User {
   username: string;
   passwordHash: string;
   createdAt: Date;
+  permissions: string[];
 }

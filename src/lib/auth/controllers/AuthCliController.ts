@@ -7,10 +7,19 @@ export class AuthCliController {
   public async createUser(): Promise<null> {
     const username = await input({ message: "Enter a username:" });
     const password = await input({ message: "Enter a password:" });
+    const permissions = (
+      await input({
+        message: "Enter permissions (comma-separated):",
+      })
+    ).split(",");
 
-    const userView = await this.userService.createUser({ username, password });
+    const userView = await this.userService.createUser({
+      username,
+      password,
+      permissions,
+    });
     console.log(
-      `Created a User\nId: ${userView.id}\nUsername: ${userView.username}\nCreation timestamp: ${userView.createdAt}`
+      `Created a User\nId: ${userView.id}\nUsername: ${userView.username}\nCreation timestamp: ${userView.createdAt}\nPermissions: ${userView.permissions}`
     );
 
     return null;
