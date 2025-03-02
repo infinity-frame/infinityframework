@@ -186,7 +186,7 @@ onMounted(() => {
 			</Actions>
 		</Box>
 
-		<Heading :semanticLevel="3">Existující meny</Heading>
+		<Heading :semanticLevel="3">Existující menu</Heading>
 		<ColumnsLayout :columns="2">
 			<Box
 				v-for="(menu, i) in dailyMenus"
