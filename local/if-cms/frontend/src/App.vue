@@ -6,17 +6,18 @@ import {
 	Box,
 	RichTextEditor,
 	TextInput,
-	DropdownInput,
 	Button,
 	Actions,
 	NormalLayout,
-	ColumnsLayout,
 } from "@infinity-frame/infinitycomponent";
-import { title } from "process";
 
 const { apiUrl, authFetch } = useApi();
 const moduleApiUrl = ref("");
 
+/**
+ * Watch for changes in the apiUrl and update moduleApiUrl accordingly.
+ * Fetch content blocks when apiUrl changes.
+ */
 watch(apiUrl, (newApiUrl) => {
 	if (newApiUrl) {
 		moduleApiUrl.value = newApiUrl + "/api/infinityframe/cms/contentBlock";
@@ -30,6 +31,10 @@ const newContent = ref("");
 
 const contentBlocks = ref([]);
 
+/**
+ * Fetch content blocks from the API.
+ * @async
+ */
 const fetchContentBlocks = async () => {
 	if (!moduleApiUrl.value) return;
 
@@ -41,6 +46,10 @@ const fetchContentBlocks = async () => {
 	}
 };
 
+/**
+ * Save a new content block to the API.
+ * @async
+ */
 const saveContentBlock = async () => {
 	if (!newElementId.value || !newContent.value) {
 		alert("Vyplňte povinné údaje.");
@@ -69,6 +78,11 @@ const saveContentBlock = async () => {
 	}
 };
 
+/**
+ * Delete a content block by its ID.
+ * @async
+ * @param {string} blockId - The ID of the content block to delete.
+ */
 const deleteContentBlock = async (blockId) => {
 	const response = await authFetch(moduleApiUrl.value + "/" + blockId, {
 		method: "DELETE",
@@ -81,6 +95,9 @@ const deleteContentBlock = async (blockId) => {
 	}
 };
 
+/**
+ * Fetch content blocks on component mount.
+ */
 onMounted(() => {
 	if (apiUrl.value) {
 		moduleApiUrl.value =
