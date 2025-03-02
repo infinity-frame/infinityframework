@@ -9,6 +9,7 @@ import {
 	NormalLayout,
 	ColumnsLayout,
 	Icon,
+	Actions,
 } from "@infinity-frame/infinitycomponent";
 
 const { apiUrl, authFetch } = useApi();
@@ -142,26 +143,48 @@ onMounted(() => {
 	<NormalLayout>
 		<Heading :semanticLevel="2">Denní menu</Heading>
 
-		<Heading :semanticLevel="3">Nové menu</Heading>
-		<TextInput
-			v-model="newDate"
-			placeholder="Datum ve formátu DD.MM.RRRR"
-		/>
+		<Box title="Nové menu">
+			<TextInput
+				v-model="newDate"
+				placeholder="Datum ve formátu DD.MM.RRRR"
+				icon="calendar_month"
+			/>
 
-		<Box :title="`Položky v menu na ${newDate || 'vybraný den'}`">
-			<ul>
-				<li v-for="(item, i) in newMenu" :key="i">
-					{{ item.name }} ............. {{ item.price }} Kč
-					<Icon @click="newMenu.splice(i, 1)" name="delete"></Icon>
-				</li>
-			</ul>
-			<ColumnsLayout :columns="3">
-				<TextInput v-model="newItems.name" placeholder="Věc" />
-				<TextInput v-model="newItems.price" placeholder="Cena" />
-				<Button @click="addItem()" label="Přidat položku"></Button>
-			</ColumnsLayout>
+			<Box :title="`Položky v menu na ${newDate || 'vybraný den'}`">
+				<ul>
+					<li v-for="(item, i) in newMenu" :key="i">
+						<p style="display: flex; align-items: center">
+							{{ item.name }} ............. {{ item.price }} Kč
+							<Icon
+								@click="newMenu.splice(i, 1)"
+								name="delete"
+								style="cursor: pointer"
+							/>
+						</p>
+					</li>
+				</ul>
+				<ColumnsLayout :columns="3">
+					<TextInput
+						v-model="newItems.name"
+						placeholder="Věc"
+						icon="lunch_dining"
+					/>
+					<TextInput
+						v-model="newItems.price"
+						placeholder="Cena"
+						icon="payments"
+					/>
+					<Button
+						@click="addItem()"
+						label="Přidat položku"
+						icon="add"
+					/>
+				</ColumnsLayout>
+			</Box>
+			<Actions>
+				<Button label="Uložit menu" @click="saveMenu" icon="save" />
+			</Actions>
 		</Box>
-		<Button label="Uložit menu" @click="saveMenu"></Button>
 
 		<Heading :semanticLevel="3">Existující meny</Heading>
 		<ColumnsLayout :columns="2">
@@ -176,12 +199,14 @@ onMounted(() => {
 						{{ item.name }} ............. {{ item.price }}
 					</li>
 				</ul>
-				<Button
-					color="danger"
-					icon="delete"
-					@click="deleteMenu(menu._id)"
-					label="Smazat"
-				></Button>
+				<Actions>
+					<Button
+						color="danger"
+						icon="delete"
+						@click="deleteMenu(menu._id)"
+						label="Smazat"
+					></Button>
+				</Actions>
 			</Box>
 		</ColumnsLayout>
 	</NormalLayout>

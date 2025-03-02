@@ -11,6 +11,10 @@
 		{
 			"source": "local",
 			"name": "if-dailyMenu"
+		},
+		{
+			"source": "local",
+			"name": "if-cms"
 		}
 	],
 	"views": [
