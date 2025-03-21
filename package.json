@@ -1,8 +1,8 @@
 {
   "name": "infinityframework",
   "version": "1.0.0",
-  "description": "Web fullstack framework with a powerful",
-  "main": "index.js",
+  "description": "A framework providing backend for small websites, including a frontend admin system.",
+  "main": "dist/index.js",
   "scripts": {
     "dev": "concurrently \"tsc --watch\" \"nodemon dist/server.js | pino-pretty\"",
     "dev:package": "tsc --watch",
@@ -13,8 +13,20 @@
     "start": "node dist/server.js"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "contributors": [
+    {
+      "name": "Kryštof Bruthans",
+      "url": "https://bruthans.eu"
+    },
+    {
+      "name": "Ondřej Dudáček",
+      "url": "https://dudacek.eu/"
+    },
+    {
+      "name": "Vojtěch Habeš"
+    }
+  ],
+  "license": "Apache-2.0",
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
     "@types/cors": "^2.8.17",
