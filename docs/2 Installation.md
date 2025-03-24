@@ -48,6 +48,8 @@ npm run test
 }
 ```
 
+We will learn more about the Manifest file in the next chapter.
+
 6. Start up the app.
 
 ```
