@@ -133,4 +133,4 @@ dist
 .pnp.*
 
 # Local sample modules dist files
-local/**/*.js
+local/
