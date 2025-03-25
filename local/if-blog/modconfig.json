@@ -1,6 +1,0 @@
-{
-  "name": "blog",
-  "vendor": "infinityframe",
-  "version": "1.1.1",
-  "collections": ["posts"]
-}
