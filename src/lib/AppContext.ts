@@ -1,9 +1,9 @@
 import { EventEmitter } from "node:events";
-import { Module } from "./Module.js";
+import { InfinityFramework } from "../types.js";
 import { Manifest } from "./Manifest.js";
 
-export class AppContext {
-  public modules: Module[];
+export class AppContext implements InfinityFramework.AppContext {
+  public modules: InfinityFramework.Module[];
   public events: EventEmitter;
   public readonly name: string;
 

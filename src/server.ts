@@ -3,7 +3,6 @@ import { ManifestFactory } from "./lib/Manifest.js";
 import { DbFactory } from "./lib/Database.js";
 import { AppFactory } from "./lib/App.js";
 import { LoadAuthModule } from "./lib/auth/index.js";
-import { Module, ModuleFactory } from "./lib/Module.js";
 import { AppContext } from "./lib/AppContext.js";
 import { LoadModules } from "./lib/ModulesLoader.js";
 

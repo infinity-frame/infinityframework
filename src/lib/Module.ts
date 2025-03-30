@@ -2,12 +2,10 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { AppContext } from "./AppContext.js";
 import { Collection, Db } from "mongodb";
-import { Router } from "express";
 import { ModuleDeclaration } from "./Manifest.js";
-import { Logger } from "pino";
 import { ModuleInitializationException } from "./Exceptions.js";
-import { ModuleInitializer } from "../types.js";
 import { ModuleLoggerFactory } from "./Logger.js";
+import { InfinityFramework } from "../types.js";
 
 interface ModuleConfigurationInput {
   collections?: unknown;
@@ -15,42 +13,10 @@ interface ModuleConfigurationInput {
   vendor?: unknown;
 }
 
-export interface ModuleConfiguration {
-  collections: string[];
-  name: string;
-  vendor: string;
-}
-
-interface ModuleCollections {
-  [declaredName: string]: Collection;
-}
-
-export interface ModuleSetupContext {
-  logger: Logger;
-  collections: ModuleCollections;
-  app: AppContext;
-}
-
-export interface ModuleExports {
-  router: Router;
-  methods: {
-    [methodName: string]: Function;
-  };
-  contexts: {
-    [contextKey: string]: Function;
-  };
-}
-
-export interface Module {
-  config: ModuleConfiguration;
-  exports: ModuleExports;
-  path: string;
-}
-
 function parseModuleConfiguration(
   modConfigInput: ModuleConfigurationInput,
   modulePath: string
-): ModuleConfiguration {
+): InfinityFramework.ModuleConfiguration {
   if (typeof modConfigInput.name !== "string")
     throw new ModuleInitializationException(
       `Invalid modconfig name declaration on path ${modulePath}`
@@ -81,7 +47,9 @@ function parseModuleConfiguration(
   };
 }
 
-function loadModuleConfiguration(modulePath: string): ModuleConfiguration {
+function loadModuleConfiguration(
+  modulePath: string
+): InfinityFramework.ModuleConfiguration {
   const modConfigRaw = JSON.parse(
     readFileSync(path.join(modulePath, "modconfig.json"), "utf-8")
   );
@@ -94,7 +62,7 @@ function loadModuleConfiguration(modulePath: string): ModuleConfiguration {
 }
 
 function provisionCollection(
-  moduleConfiguration: ModuleConfiguration,
+  moduleConfiguration: InfinityFramework.ModuleConfiguration,
   declaredCollectionName: string,
   db: Db
 ): Collection {
@@ -107,11 +75,11 @@ export async function ModuleFactory(
   declaration: ModuleDeclaration,
   appContext: AppContext,
   db: Db
-): Promise<Module> {
+): Promise<InfinityFramework.Module> {
   const modulePath = path.resolve(declaration.source, declaration.name);
   const moduleConfiguration = loadModuleConfiguration(modulePath);
 
-  const collections: ModuleCollections = {};
+  const collections: InfinityFramework.ModuleCollections = {};
   for (const moduleCollectionDeclaration of moduleConfiguration.collections) {
     collections[moduleCollectionDeclaration] = provisionCollection(
       moduleConfiguration,
@@ -122,7 +90,7 @@ export async function ModuleFactory(
 
   const logger = ModuleLoggerFactory();
 
-  const initializer: ModuleInitializer = (
+  const initializer: InfinityFramework.ModuleInitializer = (
     await import(`file://${path.join(modulePath, "index.js")}`)
   ).default;
   const exports = await initializer({ app: appContext, logger, collections });

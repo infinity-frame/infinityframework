@@ -3,7 +3,7 @@ import { Manifest, ViewDeclaration } from "./Manifest.js";
 import { Auth } from "./auth/index.js";
 import cors from "cors";
 import { Logger } from "pino";
-import { Module } from "./Module.js";
+import { InfinityFramework } from "../types.js";
 import createHttpError, { isHttpError } from "http-errors";
 import { NextFunction, Request, Response } from "express";
 import { AppContext } from "./AppContext.js";
@@ -16,7 +16,11 @@ import { existsSync } from "fs";
 import path from "path";
 import { AppInitializationException } from "./Exceptions.js";
 
-function registerModuleRouter(router: Router, module: Module, auth: Auth) {
+function registerModuleRouter(
+  router: Router,
+  module: InfinityFramework.Module,
+  auth: Auth
+) {
   router.use(
     `/${module.config.vendor}/${module.config.name}`,
     auth.middleware(`${module.config.vendor}.${module.config.name}`),
@@ -56,7 +60,7 @@ function registerAppConfigurationRoute(
 }
 
 function APIRouterFactory(
-  modules: Module[],
+  modules: InfinityFramework.Module[],
   auth: Auth,
   appConfiguration: AppConfiguration,
   logger: Logger
@@ -80,7 +84,9 @@ function APIRouterFactory(
   return router;
 }
 
-function ModuleAssetsRouterFactory(modules: Module[]): Router {
+function ModuleAssetsRouterFactory(
+  modules: InfinityFramework.Module[]
+): Router {
   const router = Router();
 
   for (const module of modules) {
@@ -215,7 +221,7 @@ function PublicRouterFactory(
 /** Primary initializer */
 export function AppFactory(
   manifest: Manifest,
-  modules: Module[],
+  modules: InfinityFramework.Module[],
   auth: Auth,
   appContext: AppContext,
   logger: Logger

@@ -4,7 +4,6 @@ import { DbFactory } from "./lib/Database.js";
 import { pino } from "pino";
 import { ManifestFactory } from "./lib/Manifest.js";
 import { AppContext } from "./lib/AppContext.js";
-import { Module, ModuleFactory } from "./lib/Module.js";
 import { LoadModules } from "./lib/ModulesLoader.js";
 
 /** CLI entrypoint */

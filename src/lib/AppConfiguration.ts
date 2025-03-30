@@ -1,5 +1,5 @@
 import { AppContext } from "./AppContext.js";
-import { Module } from "./Module.js";
+import { InfinityFramework } from "../types.js";
 
 interface ModuleConfigurationView {
   name: string;
@@ -12,7 +12,9 @@ export interface AppConfiguration {
   modules: ModuleConfigurationView[];
 }
 
-function mapModuleConfigurationView(module: Module): ModuleConfigurationView {
+function mapModuleConfigurationView(
+  module: InfinityFramework.Module
+): ModuleConfigurationView {
   return {
     name: module.config.name,
     vendor: module.config.vendor,
