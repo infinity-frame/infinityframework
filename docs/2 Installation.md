@@ -13,31 +13,37 @@ Currently, there are no builds of InfinityFramework, so you have to clone the pr
 
 ## Building from source
 
-1. Clone the repository.
+1. Create a directory for your app & cd into it.
+
+```
+mkdir myapp && cd myapp
+```
+
+2. Clone the repository.
 
 ```
 git clone https://github.com/infinity-frame/infinityframework.git
 ```
 
-2. Install dependencies.
+3. Cd into infinityframework repo & install dependencies.
 
 ```
-npm install
+cd infinityframework && npm install
 ```
 
-3. Build the project.
+4. Build the project.
 
 ```
 npm run build
 ```
 
-4. (Optional) Test the built project.
+4. 1. (Optional) Test the built project.
 
 ```
 npm run test
 ```
 
-5. Create a `manifest.json` file in the root directory and fill in the required values.
+5. Create a `manifest.json` file in the app root directory (`cd ..`) and fill in the required values.
 
 ```
 {
@@ -53,7 +59,7 @@ We will learn more about the Manifest file in the next chapter.
 6. Start up the app.
 
 ```
-npm run start
+node infinityframework
 ```
 
 [Next up – 3 Installing modules]()
