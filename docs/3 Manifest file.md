@@ -28,4 +28,4 @@ The Manifest file also contains declarations for the **modules the app should us
 
 We will learn more about modules and views in chapters 4 and 5. For now, it is only important to know that these declarations are stored in the Manifest file.
 
-[Next up – 4 Modules]()
+[Next up – 4 Modules](https://github.com/infinity-frame/infinityframework/blob/main/docs/4%20Modules.md)

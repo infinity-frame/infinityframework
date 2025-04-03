@@ -62,4 +62,4 @@ We will learn more about the Manifest file in the next chapter.
 node infinityframework
 ```
 
-[Next up – 3 Installing modules]()
+[Next up – 3 Installing modules](https://github.com/infinity-frame/infinityframework/blob/main/docs/3%20Manifest%20file.md)

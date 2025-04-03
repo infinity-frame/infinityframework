@@ -98,7 +98,7 @@ During a render, the property will become available under the `context.VENDOR.MO
 
 The rendered result:
 
-![Rendered view](TODO)
+![Rendered view](https://github.com/infinity-frame/infinityframework/blob/main/docs/images/rendered-view.png?raw=true)
 
 ## Dynamic parameters & other routing options
 
@@ -121,4 +121,4 @@ views
 │   ├── 500.ejs
 ```
 
-[Next up – 6 Static files]()
+[Next up – 6 Static files](https://github.com/infinity-frame/infinityframework/blob/main/docs/6%20Static%20files.md)

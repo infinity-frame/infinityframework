@@ -21,4 +21,4 @@ Infinityframework is ideal for:
 
 - Small websites requiring dynamic content (such as displaying daily menus in a restaurant)
 
-[Next up – 2 Installation]()
+[Next up – 2 Installation](https://github.com/infinity-frame/infinityframework/blob/main/docs/2%20Installation.md)

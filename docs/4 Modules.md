@@ -30,4 +30,4 @@ myapp
 
 For developing InfinityFramework modules, see [module development documentation]()
 
-[Next up – 5 Views]()
+[Next up – 5 Views](https://github.com/infinity-frame/infinityframework/blob/main/docs/5%20Views.md)
