@@ -9,14 +9,12 @@ Modules can be downloaded from any source you see fit - the Manifest file only n
 After downloading a module, point your Manifest file to the parent folder using the `source` property and `name` property to specify the name of the module's folder.
 
 ```json
-{
-  "modules": [
+"modules": [
     {
       "source": "node-modules",
       "name": "if-blog"
     }
-  ]
-}
+]
 ```
 
 This will result in the framework looking for the module's configuration file `modconfig.json` and all subsequent assets in:
