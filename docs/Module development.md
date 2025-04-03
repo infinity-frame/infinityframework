@@ -81,6 +81,8 @@ Your ModuleInitializer function must return a valid ModuleExports object. Becaus
 
 Router is an express router that you can use to mount your custom endpoints to the app. These routes can then be utilized by the administration environment with the valid credentials, since all your routes are protected by authorization.
 
+These routes will be mounted on the path `/api/VENDOR/NAME/`.
+
 ### Methods
 
 Methods is an object exporting all methods that will be made available to other modules during runtime.
