@@ -22,7 +22,7 @@
   <p align="center">
     A fullstack framework for making small dynamic websites.
     <br />
-    <a href="https://github.com/infinity-frame/infinityframework/tree/main/docs"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/infinity-frame/infinityframework/blob/main/docs/Overview.md"><strong>Explore the docs »</strong></a>
     <br />
     <br />
     <a href="https://github.com/github_username/repo_name">View Demo (TODO)</a>

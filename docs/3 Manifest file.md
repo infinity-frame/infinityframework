@@ -1,4 +1,4 @@
-# Configuring the Manifest file
+# Manifest file
 
 The Manifest file is the root of any InfinityFramework app. It defines the **configuration, views and modules** of an application. From this, the InfinityFramework core prepares and launches the app.
 
