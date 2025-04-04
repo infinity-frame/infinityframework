@@ -1,20 +1,21 @@
 <script setup>
 import { useRoute } from "vue-router";
-import { onMounted, onUnmounted, ref } from "vue";
+import { ref, computed, onMounted, onUnmounted } from "vue";
 
 const iframe = ref(null);
-
 const route = useRoute();
-const moduleVendor = route.params.moduleVendor;
-const moduleName = route.params.moduleName;
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
+const iframeSrc = computed(() => {
+  return `${backendUrl}/assets/${route.params.moduleVendor}/${route.params.moduleName}`;
+});
 
 const messageHandler = (event) => {
   try {
     const data = JSON.parse(event.data);
     if (data.type === "get_auth_token") {
       console.log("Sending auth token");
-      iframe.value.contentWindow.postMessage(
+      iframe.value?.contentWindow?.postMessage(
         JSON.stringify({
           type: "auth_token",
           value: localStorage.getItem("authToken"),
@@ -24,7 +25,7 @@ const messageHandler = (event) => {
     }
     if (data.type === "get_api_url") {
       console.log("Sending API URL");
-      iframe.value.contentWindow.postMessage(
+      iframe.value?.contentWindow?.postMessage(
         JSON.stringify({
           type: "api_url",
           value: import.meta.env.VITE_BACKEND_URL,
@@ -46,7 +47,8 @@ onUnmounted(() => {
 
 <template>
   <iframe
-    :src="`${backendUrl}/assets/${moduleVendor}/${moduleName}`"
+    :key="iframeSrc"
+    :src="iframeSrc"
     class="module-view"
     ref="iframe"
   ></iframe>
