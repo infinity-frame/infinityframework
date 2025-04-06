@@ -1,10 +1,11 @@
 <script setup>
-import { onMounted, ref } from "vue";
+import { computed } from "vue";
 import { useRoute, RouterLink } from "vue-router";
 import { Sidebar, NormalLayout } from "@infinity-frame/infinitycomponent";
 import authStore from "../stores/auth";
 
 const route = useRoute();
+const isModuleRoute = computed(() => route.name === "Module");
 </script>
 
 <template>
@@ -20,7 +21,7 @@ const route = useRoute();
     "
     :RouterLink="RouterLink"
   />
-  <NormalLayout>
+  <NormalLayout :class="{ 'normal normal--no-padding': isModuleRoute }">
     <router-view />
   </NormalLayout>
 </template>
